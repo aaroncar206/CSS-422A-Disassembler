@@ -1,0 +1,202 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 11/24/2021 14:53:36
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      : 68k Disassembler EA Decoding Subroutine
+00000000                             3  * Written by : Zach Hanneman
+00000000                             4  * Date       : 11/24/21
+00000000                             5  * Description: This subroutine aims to handle the EA decoding
+00000000                             6  * portion of the 68k disassembler program. It expects the 
+00000000                             7  * data detailed below this description as parameters in order
+00000000                             8  * to handle the decoding of the Effective Address Mode portion
+00000000                             9  * of the instruction currently being disassembled by the program.
+00000000                            10  *
+00000000                            11  * PRECONDITIONS:
+00000000                            12  * D5: A number representing the size of the instruction, as follows: (Needed for #<data> case, since we don't know how much data to grab otherwise!)
+00000000                            13  *   * Not Set = 0
+00000000                            14  *   * .B = 1
+00000000                            15  *   * .W = 2
+00000000                            16  *   * .L = 3
+00000000                            17  * D6: The 6-bit <ea> field (two most significant bits cleared to 0s)
+00000000                            18  * A5: Address of next word to decode (Assumed already at position after opcode word being decoded)
+00000000                            19  * A6: Print Buffer at next available space (If we end up using this...)
+00000000                            20  *
+00000000                            21  * POSTCONDITIONS: 
+00000000                            22  * D7: Good/Bad flag; Remains the same unless error occurred (e.g. invalid mode)
+00000000                            23  * A5: Memory pointer at the next opcode word (only modified if operation involved data or absolute address modes)
+00000000                            24  * A6: Pointer to next free space in print buffer (if we end up using it...)
+00000000                            25  *-----------------------------------------------------------
+00001000                            26  START       ORG     $1000 * TEMP: REMOVE ON INTEGRATION ****
+00001000                            27  *-------------------TESTING CODE----------------------------
+00001000                            28  
+00001000                            29      * Define anything I need for unit testing in here:
+00001000                            30          * 6-bit <ea> field (FORMAT: MODE, then REG)
+00001000                            31          * Sample current memory address word location in A5
+00001000                            32          * Sample print buffer (? - May not be using, we'll see during integration)
+00001000                            33          
+00001000  1C3C 001F                 34      MOVE.B  #%00011111,D6 * TEST: <ea> BITFIELD AT D6
+00001004                            35  
+00001004                            36  *-------------------Program Code----------------------------
+00001004                            37              * 1: Process the 6-bit field into D3 (Register bits) and D4 (Mode bits)
+00001004  1806                      38              MOVE.B  D6,D4 * Prime D4 with the full 6-bit field
+00001006  C83C 0007                 39              AND.B   #%00000111,D4 * Clear everything but the register bits (BITS READY)
+0000100A                            40              
+0000100A  1606                      41              MOVE.B  D6,D3 * Prime D3 with the full 6-bit field
+0000100C  E60B                      42              LSR.B   #3,D3 * Shift out the register bits to isolate the mode bits (BITS READY)
+0000100E                            43                  
+0000100E                            44              * 2: Process the MODE BITS:
+0000100E  B63C 0000                 45  MODE_P      CMP.B   #%00000000,D3   * TEST FOR 000: Dn
+00001012  6700 002E                 46              BEQ     DN_MODE
+00001016                            47              
+00001016  B63C 0001                 48              CMP.B   #%00000001,D3   * TEST FOR 001: An
+0000101A  6700 0036                 49              BEQ     AN_MODE
+0000101E                            50              
+0000101E  B63C 0002                 51              CMP.B   #%00000010,D3   * TEST FOR 010: (An)
+00001022  6700 003E                 52              BEQ     ANIND_MODE
+00001026                            53              
+00001026  B63C 0003                 54              CMP.B   #%00000011,D3   * TEST FOR 011: (An)+
+0000102A  6700 0046                 55              BEQ     ANINC_MODE
+0000102E                            56              
+0000102E  B63C 0004                 57              CMP.B   #%00000100,D3   * TEST FOR 100: -(An)
+00001032  6700 004E                 58              BEQ     ANDEC_MODE
+00001036                            59              
+00001036  B63C 0007                 60              CMP.B   #%00000111,D3   * TEST FOR 111: #<data>, (xxx).W, or (xxx).L
+0000103A  6700 0056                 61              BEQ     DATA_MODE
+0000103E                            62              
+0000103E  6000 00AA                 63              BRA     UNSUPP_MODE *** If we made it here, assume an unsupported mode! ***
+00001042                            64              
+00001042                            65              
+00001042  43F9 000010FA             66  DN_MODE     LEA     PRNT_D,A1
+00001048  103C 000E                 67              MOVE.B  #14,D0
+0000104C  4E4F                      68              TRAP    #15
+0000104E                            69              
+0000104E  6000 0052                 70              BRA     REG_P
+00001052                            71              
+00001052  43F9 000010FC             72  AN_MODE     LEA     PRNT_A,A1
+00001058  103C 000E                 73              MOVE.B  #14,D0
+0000105C  4E4F                      74              TRAP    #15
+0000105E                            75              
+0000105E  6000 0042                 76              BRA     REG_P
+00001062                            77  
+00001062  43F9 000010FE             78  ANIND_MODE  LEA     PRNT_AI,A1
+00001068  103C 000E                 79              MOVE.B  #14,D0
+0000106C  4E4F                      80              TRAP    #15
+0000106E                            81              
+0000106E  6000 0032                 82              BRA     REG_P
+00001072                            83  
+00001072  43F9 000010FE             84  ANINC_MODE  LEA     PRNT_AI,A1  * As of now this is the same as indirect, postdec added after register
+00001078  103C 000E                 85              MOVE.B  #14,D0
+0000107C  4E4F                      86              TRAP    #15
+0000107E                            87              
+0000107E  6000 0022                 88              BRA     REG_P
+00001082                            89  
+00001082  43F9 00001106             90  ANDEC_MODE  LEA     PRNT_DC,A1
+00001088  103C 000E                 91              MOVE.B  #14,D0
+0000108C  4E4F                      92              TRAP    #15
+0000108E                            93              
+0000108E  6000 0012                 94              BRA     REG_P
+00001092                            95              
+00001092                            96  * NEED TO HANDLE INCREMENTING A5 WORD FOR THIS: In these cases, A5 points to data, not an opcode word! *******
+00001092                            97      * Need to print the data/absolute addresses as needed & increment A5 after so that its on the next opcode word to decode!
+00001092  43F9 0000110A             98  DATA_MODE   LEA     PRNT_DT,A1 * DEBUG: Different behavior needed! (Keep for now until I handle this case...)
+00001098  103C 000E                 99              MOVE.B  #14,D0
+0000109C  4E4F                     100              TRAP    #15
+0000109E                           101              
+0000109E  6000 0046                102              BRA     REG_P_DAT
+000010A2                           103              
+000010A2                           104              * 3: Process the REGISTER BITS: (IN D4)
+000010A2  1204                     105  REG_P       MOVE.B     D4,D1   * Load the register value into D1 for display. (Could also convert to string...)
+000010A4  103C 0003                106              MOVE.B  #3,D0
+000010A8  4E4F                     107              TRAP    #15
+000010AA                           108              
+000010AA  B63C 0002                109              CMP.B   #%00000010,D3
+000010AE  6700 0016                110              BEQ     END_ONE
+000010B2                           111              
+000010B2  B63C 0004                112              CMP.B   #%00000100,D3
+000010B6  6700 000E                113              BEQ     END_ONE
+000010BA                           114              
+000010BA  B63C 0003                115              CMP.B   #%00000011,D3
+000010BE  6700 0016                116              BEQ     END_TWO
+000010C2                           117              
+000010C2  6000 0032                118              BRA     FINISH  * Additional char after register unnecessary, branch to finish
+000010C6                           119              
+000010C6  43F9 00001101            120  END_ONE     LEA     PRNT_CL,A1
+000010CC  103C 000E                121              MOVE.B  #14,D0
+000010D0  4E4F                     122              TRAP    #15
+000010D2                           123              
+000010D2  6000 0022                124              BRA     FINISH
+000010D6                           125  
+000010D6  43F9 00001103            126  END_TWO     LEA     PRNT_IN,A1
+000010DC  103C 000E                127              MOVE.B  #14,D0
+000010E0  4E4F                     128              TRAP    #15
+000010E2                           129              
+000010E2  6000 0012                130              BRA     FINISH
+000010E6                           131  
+000010E6                           132  REG_P_DAT   * May move this handling to exclusively under the datamode section above; For now does nothing.
+000010E6                           133              
+000010E6  6000 000E                134              BRA     FINISH  * If we reached here, we are done processing this EA field
+000010EA                           135        
+000010EA                           136              * 4: UNSUPPORTED BRANCH:
+000010EA  43F9 0000110F            137  UNSUPP_MODE LEA     PRNT_ER,A1
+000010F0  103C 000E                138              MOVE.B  #14,D0
+000010F4  4E4F                     139              TRAP    #15 * Continue directly onto finishing up from here
+000010F6                           140              
+000010F6                           141              * 5: Finishing up:
+000010F6                           142  FINISH
+000010F6                           143  
+000010F6  FFFF FFFF                144              SIMHALT * TEMP: REMOVE ON INTEGRATION **********
+000010FA                           145  *------------------Vars and Consts--------------------------
+000010FA                           146  
+000010FA                           147      * Define any constants/vars besides registers I need here.
+000010FA                           148  
+000010FA                           149  *------------------Messages for Printing -------------------
+000010FA  =0000000D                150  CR      EQU     $0D
+000010FA  =0000000A                151  LF      EQU     $0A
+000010FA                           152  
+000010FA= 44 00                    153  PRNT_D  DC.B    'D',0
+000010FC= 41 00                    154  PRNT_A  DC.B    'A',0
+000010FE= 28 41 00                 155  PRNT_AI DC.B    '(A',0
+00001101= 29 00                    156  PRNT_CL DC.B    ')',0
+00001103= 29 2B 00                 157  PRNT_IN DC.B    ')+',0
+00001106= 2D 28 41 00              158  PRNT_DC DC.B    '-(A',0
+0000110A                           159  
+0000110A= 23 24 00                 160  PRNT_DT DC.B    '#$',0
+0000110D= 24 00                    161  PRNT_HX DC.B    '$',0
+0000110F                           162  
+0000110F= 45 52 52 4F 52 3A ...    163  PRNT_ER DC.B    'ERROR: Unsupported effective address mode!',0
+0000113A                           164  *-----------------------------------------------------------
+0000113A                           165              END    START * TEMP: REMOVE ON INTEGRATION *****
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ANDEC_MODE          1082
+ANINC_MODE          1072
+ANIND_MODE          1062
+AN_MODE             1052
+CR                  D
+DATA_MODE           1092
+DN_MODE             1042
+END_ONE             10C6
+END_TWO             10D6
+FINISH              10F6
+LF                  A
+MODE_P              100E
+PRNT_A              10FC
+PRNT_AI             10FE
+PRNT_CL             1101
+PRNT_D              10FA
+PRNT_DC             1106
+PRNT_DT             110A
+PRNT_ER             110F
+PRNT_HX             110D
+PRNT_IN             1103
+REG_P               10A2
+REG_P_DAT           10E6
+START               1000
+UNSUPP_MODE         10EA
