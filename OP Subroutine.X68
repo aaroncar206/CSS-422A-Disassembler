@@ -146,11 +146,11 @@ MOVE_SIZE
 MOVE_B    
     *Print .B (byte)
     JSR PRINT_B
-    
+    *Proceed to EA Subroutine    
 MOVE_W    
     *Print .W (word)
     JSR PRINT_W
-    
+    *Proceed to EA Subroutine    
 MOVE_L
     *Print .L (long)
     JSR PRINT_L
@@ -393,6 +393,10 @@ OP_10   *OR,SUB
     
     BRA     INVALID_OP
 IS_OR
+    LEA     PRNT_OR,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    
     MOVE.L  D3,D4
     LSL.W   #7,D4
     MOVE.B  #13,D6
@@ -400,19 +404,15 @@ IS_OR
     
     CMP.B   #%000,D4
     BEQ     OR_B
-    
     CMP.B   #%001,D4
     BEQ     OR_W
-    
     CMP.B   #%010,D4
     BEQ     OR_L
     
     CMP.B   #%100,D4
     BEQ     OR_B
-    
     CMP.B   #%101,D4
     BEQ     OR_W
-    
     CMP.B   #%110,D4
     BEQ     OR_L
     
@@ -420,12 +420,18 @@ IS_OR
     
 OR_B
     JSR PRINT_B
+    *Proceed to EA Subroutine    
 OR_W
     JSR PRINT_W
+    *Proceed to EA Subroutine    
 OR_L
     JSR PRINT_L
-    
+    *Proceed to EA Subroutine    
 IS_SUB
+    LEA     PRNT_SUB,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+
     MOVE.L  D3,D4
     LSL.W   #7,D4
     MOVE.B  #13,D6
@@ -433,29 +439,313 @@ IS_SUB
     
     CMP.B   #%000,D4
     BEQ     SUB_B
-    
     CMP.B   #%001,D4
     BEQ     SUB_W
-    
     CMP.B   #%010,D4
     BEQ     SUB_L
 
     CMP.B   #%100,D4
     BEQ     SUB_B
-    
     CMP.B   #%101,D4
     BEQ     SUB_W
-    
     CMP.B   #%110,D4
     BEQ     SUB_L    
 SUB_B
     JSR PRINT_B
+    *Proceed to EA Subroutine    
 SUB_W
     JSR PRINT_W
+    *Proceed to EA Subroutine    
 SUB_L
     JSR PRINT_L
+    *Proceed to EA Subroutine    
 OP_11
+    MOVE.L  D3,D4
+    MOVE.B  #12,D6
+    LSR.W   D6,D4
+    
+    CMP.B   #%1100,D4   *AND
+    BEQ     OP_1100
+    
+    CMP.B   #%1101,D4   *ADD,ADDA
+    BEQ     OP_1101
+    
+    CMP.B   #%1110,D4   *LSL/LSR,ASL/ASR,ROL/ROR
+    BEQ     OP_1110
+    
+    BRA     INVALID_OP
+OP_1100 *AND
+    LEA     PRNT_AND,A1
+    MOVE.B  #14,D0
+    TRAP    #15
 
+    MOVE.L  D3,D4
+    LSL.W   #7,D4
+    MOVE.B  #13,D6
+    LSR.W   D6,D4 *Get Opmode
+    *< ea > Dn -> Dn
+    CMP.B   #%000,D4
+    BEQ     AND_B
+    CMP.B   #%001,D4
+    BEQ     AND_W
+    CMP.B   #%010,D4
+    BEQ     AND_L
+    *Dn < ea > -> < ea >
+    CMP.B   #%100,D4
+    BEQ     AND_B
+    CMP.B   #%101,D4
+    BEQ     AND_W
+    CMP.B   #%110,D4
+    BEQ     AND_L
+    
+    BRA     INVALID_OP
+AND_B
+    JSR PRINT_B
+    *Proceed to EA Subroutine    
+AND_W
+    JSR PRINT_W
+    *Proceed to EA Subroutine    
+AND_L    
+    JSR PRINT_L
+    *Proceed to EA Subroutine    
+    
+OP_1101 *ADD,ADDA
+    MOVE.L  D3,D4
+    LSL.W   #7,D4
+    MOVE.B  #13,D6
+    LSR.W   D6,D4 *Get Opmode
+    
+    *ADD Opmodes
+    CMP.B   #%000,D4
+    BEQ     ADD_B
+    CMP.B   #%001,D4
+    BEQ     ADD_W
+    CMP.B   #%010,D4
+    BEQ     ADD_L
+    
+    CMP.B   #%100,D4
+    BEQ     ADD_B
+    CMP.B   #%101,D4
+    BEQ     ADD_W
+    CMP.B   #%110,D4
+    BEQ     ADD_L
+    *ADDA Opmodes
+    CMP.B   #%011,D4
+    BEQ     ADDA_W
+    CMP.B   #%111,D4
+    BEQ     ADDA_L
+    
+    BRA     INVALID_OP
+IS_ADD
+    LEA     PRNT_ADD,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    RTS
+IS_ADDA
+    LEA     PRNT_ADDA,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    RTS
+ADD_B
+    JSR     IS_ADD
+    JSR     PRINT_B
+    *Proceed to EA Subroutine    
+ADD_W
+    JSR     IS_ADD
+    JSR     PRINT_W
+    *Proceed to EA Subroutine    
+ADD_L
+    JSR     IS_ADD
+    JSR     PRINT_L
+    *Proceed to EA Subroutine
+    
+ADDA_W
+    JSR     IS_ADDA
+    JSR     PRINT_W
+    *Proceed to EA Subroutine    
+ADDA_L  
+    JSR     IS_ADDA  
+    JSR     PRINT_L
+    *Proceed to EA Subroutine    
+    
+OP_1110 *LSL/LSR,ASL/ASR,ROL/ROR
+    MOVE.L  D3,D4
+    *Register Shift check bits 4,3
+    MOVE.B  #11,D6
+    LSL.W   D6,D4
+    MOVE.B  #17,D6
+    LSR.W   D6,D4
+    
+    CMP.B   #%00,D4 *ASL/ASR
+    BEQ     A_REG
+    CMP.B   #%01,D4 *LSL/LSR
+    BEQ     L_REG
+    CMP.B   #%11,D4 *ROL/ROR
+    BEQ     R_REG
+    *Memory Shift check bits 11,10,9
+    MOVE.L  D3,D4
+    LSL.W   #4,D4
+    MOVE.B  #13,D6
+    LSR.W   D6,D4
+    
+    CMP.B   #%000,D4 *ASL/ASR
+    BEQ     A_MEM
+    CMP.B   #%001,D4 *LSL,LSR
+    BEQ     L_MEM
+    CMP.B   #%011,D4 *ROL/ROR
+    BEQ     R_MEM
+    
+    BRA     INVALID_OP
+    
+    *Check bit 8 to determine L/R shift
+A_REG
+    JSR     RGHT_LFT
+    CLR.L   D6
+    MOVE.B  #01,D6
+    CMP.B   #%0,D4
+    BEQ     IS_ASR
+    CMP.B   #%1,D4
+    BEQ     IS_ASL
+    
+    BRA INVALID_OP
+A_SIZE    
+    BRA     GET_SHFT_SIZE 
+
+A_MEM
+    JSR     RGHT_LFT
+    CLR.L   D6
+    MOVE.B  #02,D6
+    CMP.B   #%0,D4
+    BEQ     IS_ASR
+    CMP.B   #%1,D4
+    BEQ     IS_ASL    
+    *Proceed to EA Subroutine
+    SIMHALT
+IS_ASR
+    LEA     PRNT_ASR,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    CMP.B   #01,D6
+    BEQ     A_SIZE
+    SIMHALT
+IS_ASL
+    LEA     PRNT_ASL,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    CMP.B   #01,D6
+    BEQ     A_SIZE
+    SIMHALT
+    
+L_REG
+    JSR     RGHT_LFT
+    CLR.L   D6
+    MOVE.B  #01,D6
+    CMP.B   #%0,D4
+    BEQ     IS_LSR
+    CMP.B   #%1,D4
+    BEQ     IS_LSL
+    
+    BRA INVALID_OP
+L_SIZE    
+    BRA     GET_SHFT_SIZE 
+
+L_MEM
+    JSR     RGHT_LFT
+    CLR.L   D6
+    MOVE.B  #02,D6
+    CMP.B   #%0,D4
+    BEQ     IS_LSR
+    CMP.B   #%1,D4
+    BEQ     IS_LSL    
+    *Proceed to EA Subroutine
+    SIMHALT
+IS_LSR
+    LEA     PRNT_LSR,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    CMP.B   #01,D6
+    BEQ     L_SIZE
+    SIMHALT
+IS_LSL
+    LEA     PRNT_LSL,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    CMP.B   #01,D6
+    BEQ     L_SIZE    
+    SIMHALT
+R_REG
+    JSR     RGHT_LFT
+    CLR.L   D6
+    MOVE.B  #01,D6
+    CMP.B   #%0,D4
+    BEQ     IS_ROR
+    CMP.B   #%1,D4
+    BEQ     IS_ROL
+    
+    BRA INVALID_OP
+R_SIZE    
+    BRA     GET_SHFT_SIZE 
+
+R_MEM
+    JSR     RGHT_LFT
+    CLR.L   D6
+    MOVE.B  #02,D6
+    CMP.B   #%0,D4
+    BEQ     IS_ROR
+    CMP.B   #%1,D4
+    BEQ     IS_ROL    
+    *Proceed to EA Subroutine
+    SIMHALT
+IS_ROR
+    LEA     PRNT_ROR,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    CMP.B   #01,D6
+    BEQ     R_SIZE
+    SIMHALT
+IS_ROL
+    LEA     PRNT_ROL,A1
+    MOVE.B  #14,D0
+    TRAP    #15
+    CMP.B   #01,D6
+    BEQ     R_SIZE
+    SIMHALT
+
+GET_IR
+    MOVE.L  D3,D4
+    MOVE.B  #10,D6
+    LSL.W   D6,D4
+    MOVE.B  #15,D6
+    LSR.W   D6,D4
+    
+    MOVE.W  D4,D1
+    MOVE.B  #3,D0
+    TRAP    #15
+    SIMHALT    
+
+RGHT_LFT    *0 = RIGHT 1 = LEFT
+*Determine if right/left shift
+    MOVE.L  D3,D4
+    MOVE.B  #15,D6
+    LSL.W   #7,D4
+    LSR.W   D6,D4
+    RTS
+    
+GET_SHFT_SIZE
+    MOVE.L  D3,D4
+    LSL.W   #8,D4
+    MOVE.B  #14,D6
+    LSR.W   D6,D4
+    
+    CMP.B   #%00,D4    *B
+    BEQ     PRINT_B
+    CMP.B   #%01,D4    *W
+    BEQ     PRINT_W
+    CMP.B   #%10,D4    *L
+    BEQ     PRINT_L
+    
+    *Proceed to EA Subroutine    
+ 
 PRINT_B
     LEA     PRNT_B,A1
     MOVE.B  #14,D0
@@ -499,12 +789,27 @@ PRNT_BLE    DC.B    'BLE',0
 PRNT_BEQ    DC.B    'BEQ',0
 PRNT_BRA    DC.B    'BRA',0
 PRNT_NOT    DC.B    'NOT',0
+PRNT_OR     DC.B    'OR',0
 PRNT_LEA    DC.B    'LEA',0
 PRNT_ADDQ   DC.B    'ADDQ',0
+PRNT_ADD    DC.B    'ADD',0
+PRNT_ADDA   DC.B    'ADDA',0
+PRNT_AND    DC.B    'AND',0
+PRNT_SUB    DC.B    'SUB',0
+PRNT_ASL    DC.B    'ASL',0
+PRNT_ASR    DC.B    'ASR',0
+PRNT_LSL    DC.B    'LSL',0
+PRNT_LSR    DC.B    'LSR',0
+PRNT_ROL    DC.B    'ROL',0
+PRNT_ROR    DC.B    'ROR',0
+
 *D3 = original instruction
 *D4 = copy of instruction
 *D6 = num of bits to shift
     END    START        ; last line of source
+
+
+
 
 *~Font name~Courier New~
 *~Font size~10~
