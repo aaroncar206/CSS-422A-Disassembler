@@ -113,10 +113,28 @@ DONE_END_CONV
     CLR.W D4
     MOVEA.L D3,A4
     CLR D3
+    CLR D4
+    
+    CMPA.L A3,A4 check if starting address is less than ending 
+    BMI DISPLAY_INVALID_ORDER
     
     BRA PREPARE_DISPLAY_BUFFER
     *-- op code person takes over from here--
     *-- derive opcodes starting from start address --*
+    
+DISPLAY_INVALID_ORDER
+    LEA INVALID_ORDER, A1
+    MOVE.B #14,D0 
+    TRAP #15 
+    
+    LEA LINE_BREAK,A1
+    MOVE.B #14,D0 
+    TRAP #15 
+    CLR D3
+    ADDI #1,D4 force to jump straight to DONE_END_CONV when back in DONE_START_CONV
+    MOVE.W #$0000,A4 clear A4 for reprocessing
+    
+    BRA PROMPT_FOR_END
 
 * Prepare display buffer (these variables will be filled with real memory upon integration)
 PREPARE_DISPLAY_BUFFER 
@@ -239,11 +257,12 @@ PROMPT_USER_FOR_ENTER
     
 
 * Put variables and constants here
-PROMPT_START DC.B 'Please enter a starting address in hexadecimal: ' ,0
-PROMPT_END DC.B 'Please enter an ending address in hexadecimal: ' ,0
+PROMPT_START DC.B 'Please enter starting address in hexadecimal: ' ,0
+PROMPT_END DC.B 'Please enter ending address in hexadecimal (must be after starting): ' ,0
 INVALID_HEX DC.W 'Error: Address must be in valid hexadecimal' ,CR,LF,0
 DONE_MESSAGE DC.B 'Done printing instructions' ,CR,LF,0
 ENTER_MESSAGE DC.W 'Please press enter to display new screen ' ,CR,LF,0
+INVALID_ORDER DC.W 'Error: ending address must come after starting',CR,LF,0
 INVALID_MEM_ADDR DS.W 1
 DATA DC.W ' DATA ',CR,LF,0
 INVALID_HEX_VAL DS.W 1 
@@ -270,19 +289,3 @@ DONE
     TRAP #15 
     END    START        ; last line of source
 
-
-
-
-
-
-
-
-
-
-
-
-
-*~Font name~Courier New~
-*~Font size~10~
-*~Tab type~1~
-*~Tab size~4~
