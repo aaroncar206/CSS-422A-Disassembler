@@ -1,6 +1,6 @@
 00001000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 11/30/2021 12:03:36 PM
+Created On: 11/30/2021 11:05:46 PM
 
 00000000                             1  *-----------------------------------------------------------
 00000000                             2  * Title      : Dissassembler IO Subroutine
@@ -31,7 +31,7 @@ Created On: 11/30/2021 12:03:36 PM
 00001000                            27  
 00001000                            28  * --Prompt user for starting address--
 00001000                            29  PROMPT_FOR_START
-00001000  43F9 00001232             30      LEA PROMPT_START,A1 
+00001000  43F9 00001294             30      LEA PROMPT_START,A1 
 00001006  103C 000E                 31      MOVE.B #14,D0 
 0000100A  4E4F                      32      TRAP #15 
 0000100C  227C 00000000             33      MOVEA.L #0,A1
@@ -43,7 +43,7 @@ Created On: 11/30/2021 12:03:36 PM
 0000101C                            39  
 0000101C                            40  * --Prompt user for ending address--
 0000101C                            41  PROMPT_FOR_END
-0000101C  43F9 00001261             42      LEA PROMPT_END,A1 
+0000101C  43F9 000012C3             42      LEA PROMPT_END,A1 
 00001022  103C 000E                 43      MOVE.B #14,D0 
 00001026  4E4F                      44      TRAP #15 
 00001028  227C 00000000             45      MOVEA.L #0,A1
@@ -73,11 +73,11 @@ Created On: 11/30/2021 12:03:36 PM
 0000105E                            69  
 0000105E                            70  * --Display invalid hex error upon invalid input--
 0000105E                            71  DISPLAY_INVALID_HEX
-0000105E  43F9 000012A8             72      LEA INVALID_HEX,A1
+0000105E  43F9 0000130A             72      LEA INVALID_HEX,A1
 00001064  103C 000E                 73      MOVE.B #14,D0 
 00001068  4E4F                      74      TRAP #15 
 0000106A                            75      
-0000106A  43F9 0000136C             76      LEA LINE_BREAK,A1
+0000106A  43F9 00001400             76      LEA LINE_BREAK,A1
 00001070  103C 000E                 77      MOVE.B #14,D0 
 00001074  4E4F                      78      TRAP #15 
 00001076  4243                      79      CLR D3
@@ -127,11 +127,11 @@ Created On: 11/30/2021 12:03:36 PM
 000010C0                           123      *-- derive opcodes starting from start address --*
 000010C0                           124      
 000010C0                           125  DISPLAY_INVALID_ORDER
-000010C0  43F9 00001328            126      LEA INVALID_ORDER, A1
+000010C0  43F9 00001388            126      LEA INVALID_ORDER, A1
 000010C6  103C 000E                127      MOVE.B #14,D0 
 000010CA  4E4F                     128      TRAP #15 
 000010CC                           129      
-000010CC  43F9 0000136C            130      LEA LINE_BREAK,A1
+000010CC  43F9 00001400            130      LEA LINE_BREAK,A1
 000010D2  103C 000E                131      MOVE.B #14,D0 
 000010D6  4E4F                     132      TRAP #15 
 000010D8  4243                     133      CLR D3
@@ -142,11 +142,11 @@ Created On: 11/30/2021 12:03:36 PM
 000010E4                           138  
 000010E4                           139  * Prepare display buffer (these variables will be filled with real memory upon integration)
 000010E4                           140  PREPARE_DISPLAY_BUFFER 
-000010E4  33F9 0000137A 00001378   141      MOVE.W INSTRUCTION_ADDR_MESSAGE, INSTRUCTION_ADDR  *-- make placeholder for instruction address
-000010EE  33F9 0000138E 0000138C   142      MOVE.W OPCODE_MESSAGE, OPCODE *-- make placeholder for opcode
+000010E4  33F9 0000140E 0000140C   141      MOVE.W INSTRUCTION_ADDR_MESSAGE, INSTRUCTION_ADDR  *-- make placeholder for instruction address
+000010EE  33F9 00001422 00001420   142      MOVE.W OPCODE_MESSAGE, OPCODE *-- make placeholder for opcode
 000010F8                           143      
-000010F8  33FC 1398 00001396       144      MOVE.W #OPERAND1_MESSAGE, OPERAND1 *-- make placeholder for first operand 
-00001100  33FC 13A4 000013A2       145      MOVE.W #OPERAND2_MESSAGE, OPERAND2 *-- make placeholder for second operand 
+000010F8  33FC 142C 0000142A       144      MOVE.W #OPERAND1_MESSAGE, OPERAND1 *-- make placeholder for first operand 
+00001100  33FC 1438 00001436       145      MOVE.W #OPERAND2_MESSAGE, OPERAND2 *-- make placeholder for second operand 
 00001108                           146          
 00001108                           147  *-- Traverse through mock data in memory and print out until ending address
 00001108                           148  *-- NOTE** displays random YY's which is okay for now. Intent is to demonstrate 
@@ -155,34 +155,34 @@ Created On: 11/30/2021 12:03:36 PM
 00001108  4EB9 000011F8            151      JSR NEEDS_NEW_SCREEN
 0000110E                           152      
 0000110E  B9CB                     153      CMPA.L A3,A4 *-- check if at end address 
-00001110  6F00 02AE                154      BLE DONE
+00001110  6F00 0120                154      BLE REACHED_END
 00001114                           155   
-00001114  33DB 00001378            156      MOVE.W (A3)+,INSTRUCTION_ADDR *get first word in mem
-0000111A  43F9 00001378            157      LEA INSTRUCTION_ADDR, A1
+00001114  33DB 0000140C            156      MOVE.W (A3)+,INSTRUCTION_ADDR *get first word in mem
+0000111A  43F9 0000140C            157      LEA INSTRUCTION_ADDR, A1
 00001120  103C 000E                158      MOVE.B #14,D0 
 00001124  4E4F                     159      TRAP #15 
 00001126                           160      
-00001126  43F9 00001370            161      LEA SPACE, A1
+00001126  43F9 00001404            161      LEA SPACE, A1
 0000112C  103C 000E                162      MOVE.B #14,D0 
 00001130  4E4F                     163      TRAP #15 
 00001132                           164      
 00001132  BC3C 0001                165      CMP.B #1, D6 *-- check for valid opcode
 00001136  6700 008C                166      BEQ DISPLAY_INVALID_INSTRUCTION
 0000113A                           167      
-0000113A  33DB 0000138C            168      MOVE.W (A3)+,OPCODE *get next word in mem
-00001140  43F9 0000138C            169      LEA OPCODE, A1
+0000113A  33DB 00001420            168      MOVE.W (A3)+,OPCODE *get next word in mem
+00001140  43F9 00001420            169      LEA OPCODE, A1
 00001146  103C 000E                170      MOVE.B #14,D0 
 0000114A  4E4F                     171      TRAP #15 
 0000114C                           172      
-0000114C  43F9 00001370            173      LEA SPACE, A1
+0000114C  43F9 00001404            173      LEA SPACE, A1
 00001152  103C 000E                174      MOVE.B #14,D0 
 00001156  4E4F                     175      TRAP #15 
 00001158                           176      
 00001158  BE3C 0001                177      CMP.B #1, D7 *-- check for valid operand1
 0000115C  6700 0066                178      BEQ DISPLAY_INVALID_INSTRUCTION
 00001160                           179      
-00001160  33DB 00001396            180      MOVE.W (A3)+,OPERAND1 *get next word in mem
-00001166  43F9 00001396            181      LEA OPERAND1, A1
+00001160  33DB 0000142A            180      MOVE.W (A3)+,OPERAND1 *get next word in mem
+00001166  43F9 0000142A            181      LEA OPERAND1, A1
 0000116C  103C 000E                182      MOVE.B #14,D0 
 00001170  4E4F                     183      TRAP #15 
 00001172                           184      
@@ -190,7 +190,7 @@ Created On: 11/30/2021 12:03:36 PM
 00001176  BA3C 0006                186      CMP.B #6,D5 *-- check if another operand is needed
 0000117A  6700 0012                187      BEQ PRINT_SECOND_OPERAND
 0000117E                           188      
-0000117E  43F9 0000136C            189      LEA LINE_BREAK,A1
+0000117E  43F9 00001400            189      LEA LINE_BREAK,A1
 00001184  103C 000E                190      MOVE.B #14,D0 
 00001188  4E4F                     191      TRAP #15
 0000118A                           192      
@@ -201,16 +201,16 @@ Created On: 11/30/2021 12:03:36 PM
 0000118E  BA3C 0001                197      CMP.B #1, D5 *-- check for valid operand2
 00001192  6700 0030                198      BEQ DISPLAY_INVALID_INSTRUCTION
 00001196                           199      
-00001196  43F9 00001374            200      LEA COMMA, A1
+00001196  43F9 00001408            200      LEA COMMA, A1
 0000119C  103C 000E                201      MOVE.B #14,D0 
 000011A0  4E4F                     202      TRAP #15
 000011A2                           203      
-000011A2  33DB 000013A2            204      MOVE.W (A3)+,OPERAND2 *get next word in mem
-000011A8  43F9 000013A2            205      LEA OPERAND2, A1
+000011A2  33DB 00001436            204      MOVE.W (A3)+,OPERAND2 *get next word in mem
+000011A8  43F9 00001436            205      LEA OPERAND2, A1
 000011AE  103C 000E                206      MOVE.B #14,D0 
 000011B2  4E4F                     207      TRAP #15 
 000011B4                           208  
-000011B4  43F9 0000136C            209      LEA LINE_BREAK,A1
+000011B4  43F9 00001400            209      LEA LINE_BREAK,A1
 000011BA  103C 000E                210      MOVE.B #14,D0 
 000011BE  4E4F                     211      TRAP #15
 000011C0                           212      
@@ -218,17 +218,17 @@ Created On: 11/30/2021 12:03:36 PM
 000011C4                           214      
 000011C4                           215  *Display XXXXXXXX DATA YYYY if memory cannot be decoded to legitimate instruction   
 000011C4                           216  DISPLAY_INVALID_INSTRUCTION 
-000011C4  33D3 0000135C            217      MOVE.W (A3),INVALID_MEM_ADDR *get invalid word in mem
-000011CA  43F9 0000135C            218      LEA INVALID_MEM_ADDR, A1
+000011C4  33D3 000013F0            217      MOVE.W (A3),INVALID_MEM_ADDR *get invalid word in mem
+000011CA  43F9 000013F0            218      LEA INVALID_MEM_ADDR, A1
 000011D0  103C 000E                219      MOVE.B #14,D0 
 000011D4  4E4F                     220      TRAP #15 
 000011D6                           221  
-000011D6  43F9 0000135E            222      LEA DATA, A1
+000011D6  43F9 000013F2            222      LEA DATA, A1
 000011DC  103C 000E                223      MOVE.B #14,D0 
 000011E0  4E4F                     224      TRAP #15 
 000011E2                           225      
-000011E2  33D3 0000136A            226      MOVE.W (A3),INVALID_HEX_VAL *get next word in mem
-000011E8  43F9 0000136A            227      LEA INVALID_HEX_VAL, A1
+000011E2  33D3 000013FE            226      MOVE.W (A3),INVALID_HEX_VAL *get next word in mem
+000011E8  43F9 000013FE            227      LEA INVALID_HEX_VAL, A1
 000011EE  103C 000E                228      MOVE.B #14,D0 
 000011F2  4E4F                     229      TRAP #15 
 000011F4                           230      
@@ -239,18 +239,18 @@ Created On: 11/30/2021 12:03:36 PM
 000011F8  5244                     235      ADD      #1,D4                   
 000011FA  B87C 001A                236      CMP      #26,D4 check if output reaches 25 lines                                                                                                
 000011FE  6700 0010                237      BEQ      PROMPT_USER_FOR_ENTER
-00001202  43F9 00001370            238      LEA      SPACE,A1           
+00001202  43F9 00001404            238      LEA      SPACE,A1           
 00001208  303C 000E                239      MOVE     #14,D0                 
 0000120C  4E4F                     240      TRAP     #15                        
 0000120E  4E75                     241      RTS 
 00001210                           242      
 00001210                           243  *--Prompt user to press enter when display reaches line limit    
 00001210                           244  PROMPT_USER_FOR_ENTER
-00001210  43F9 00001370            245      LEA    SPACE,A1 
+00001210  43F9 00001404            245      LEA    SPACE,A1 
 00001216  103C 000D                246      MOVE.B #13,D0   
 0000121A  4E4F                     247      TRAP   #15
 0000121C                           248  
-0000121C  43F9 000012F8            249      LEA ENTER_MESSAGE, A1 *Prompt user to press enter to display new screen
+0000121C  43F9 00001358            249      LEA ENTER_MESSAGE, A1 *Prompt user to press enter to display new screen
 00001222  103C 000E                250      MOVE.B #14, D0
 00001226  4E4F                     251      TRAP #15
 00001228                           252      
@@ -258,40 +258,78 @@ Created On: 11/30/2021 12:03:36 PM
 0000122A  103C 0005                254      MOVE.B   #5,D0          
 0000122E  4E4F                     255      TRAP     #15            
 00001230  4E75                     256      RTS 
-00001232                           257      
-00001232                           258  
-00001232                           259  * Put variables and constants here
-00001232= 50 6C 65 61 73 65 ...    260  PROMPT_START DC.B 'Please enter starting address in hexadecimal: ' ,0
-00001261= 50 6C 65 61 73 65 ...    261  PROMPT_END DC.B 'Please enter ending address in hexadecimal (must be after starting): ' ,0
-000012A8= 4572 726F 723A 2...      262  INVALID_HEX DC.W 'Error: Address must be in valid hexadecimal' ,CR,LF,0
-000012DA= 44 6F 6E 65 20 70 ...    263  DONE_MESSAGE DC.B 'Done printing instructions' ,CR,LF,0
-000012F8= 506C 6561 7365 2...      264  ENTER_MESSAGE DC.W 'Please press enter to display new screen ' ,CR,LF,0
-00001328= 4572 726F 723A 2...      265  INVALID_ORDER DC.W 'Error: ending address must come after starting',CR,LF,0
-0000135C                           266  INVALID_MEM_ADDR DS.W 1
-0000135E= 2044 4154 4120 0...      267  DATA DC.W ' DATA ',CR,LF,0
-0000136A                           268  INVALID_HEX_VAL DS.W 1 
-0000136C= 20 0D 0A 00              269  LINE_BREAK DC.B ' ',CR,LF,0
-00001370= 2000 0000                270  SPACE DC.W ' ',0
-00001374= 2C00 0000                271  COMMA DC.W ',',0
-00001378                           272  INSTRUCTION_ADDR DS.B 1
-0000137A= 494E 5354 5255 4...      273  INSTRUCTION_ADDR_MESSAGE DC.W 'INSTRUCTION ADDR',0
-0000138C                           274  OPCODE DS.W 1
-0000138E= 4F50 434F 4445 0000      275  OPCODE_MESSAGE DC.W 'OPCODE',0
-00001396                           276  OPERAND1 DS.W 1
-00001398= 4F50 4552 414E 4...      277  OPERAND1_MESSAGE DC.W 'OPERAND1',0
-000013A2                           278  OPERAND2 DS.W 1
-000013A4= 4F50 4552 414E 4...      279  OPERAND2_MESSAGE DC.W 'OPERAND2',0
-000013AE                           280  
-000013AE                           281  GOOD_BAD_FLAG DS.B 1
-000013AF                           282  
-000013B0                           283  START_ADDR DS.W 4
-000013B8                           284  END_ADDR DS.W 4
-000013C0                           285  
-000013C0                           286  DONE
-000013C0  43F8 12DA                287      LEA DONE_MESSAGE, A1
-000013C4  103C 000E                288      MOVE.B #14,D0 
-000013C8  4E4F                     289      TRAP #15 
-000013CA                           290      END    START        ; last line of source
+00001232                           257  
+00001232                           258  *--Ask if user wants to disassemble more memory--*
+00001232                           259  REACHED_END
+00001232  43F9 00001404            260      LEA SPACE, A1
+00001238  103C 000E                261      MOVE.B #14,D0 
+0000123C  4E4F                     262      TRAP #15 
+0000123E                           263      
+0000123E  43F9 000013BC            264      LEA ASK_REPEAT,A1 
+00001244  103C 000E                265      MOVE.B #14,D0 
+00001248  4E4F                     266      TRAP #15 
+0000124A                           267      
+0000124A  103C 0004                268      MOVE.B #4,D0 
+0000124E  4E4F                     269      TRAP #15 Read num from the keyboard into D1.L
+00001250                           270      
+00001250  0C01 0000                271      CMPI.B #0, D1 0 = yes
+00001254  6700 000A                272      BEQ CLEAR_REG
+00001258                           273      
+00001258  0C01 0001                274      CMPI.B #1,D1 1 = no
+0000125C  6700 01F6                275      BEQ DONE
+00001260                           276      
+00001260                           277  *--Clear all registers for reprocessing--*
+00001260                           278  CLEAR_REG 
+00001260  4241                     279      CLR D1
+00001262  4242                     280      CLR D2
+00001264  4243                     281      CLR D3
+00001266  4244                     282      CLR D4
+00001268  4245                     283      CLR D5
+0000126A  4246                     284      CLR D6
+0000126C                           285      
+0000126C  207C 00000000            286      MOVE.L #00000000,A0
+00001272  227C 00000000            287      MOVE.L #00000000,A1
+00001278  267C 00000000            288      MOVE.L #00000000,A3
+0000127E  287C 00000000            289      MOVE.L #00000000,A4
+00001284  2A7C 00000000            290      MOVE.L #00000000,A5
+0000128A  2C7C 00000000            291      MOVE.L #00000000,A6
+00001290                           292      
+00001290  6000 FD6E                293      BRA PROMPT_FOR_START
+00001294                           294  
+00001294                           295  * Put variables and constants here
+00001294= 50 6C 65 61 73 65 ...    296  PROMPT_START DC.B 'Please enter starting address in hexadecimal: ' ,0
+000012C3= 50 6C 65 61 73 65 ...    297  PROMPT_END DC.B 'Please enter ending address in hexadecimal (must be after starting): ' ,0
+0000130A= 4572 726F 723A 2...      298  INVALID_HEX DC.W 'Error: Address must be in valid hexadecimal' ,CR,LF,0
+0000133C= 44 6F 6E 65 20 72 ...    299  DONE_MESSAGE DC.B 'Done reading instructions' ,CR,LF,0
+00001358= 506C 6561 7365 2...      300  ENTER_MESSAGE DC.W 'Please press enter to display new screen ' ,CR,LF,0
+00001388= 4572 726F 723A 2...      301  INVALID_ORDER DC.W 'Error: ending address must come after starting',CR,LF,0
+000013BC= 4469 7361 7373 6...      302  ASK_REPEAT DC.W 'Disassemble another mem range? (Yes = 0, No = 1) ' ,0 
+000013F0                           303  INVALID_MEM_ADDR DS.W 1
+000013F2= 2044 4154 4120 0...      304  DATA DC.W ' DATA ',CR,LF,0
+000013FE                           305  INVALID_HEX_VAL DS.W 1 
+00001400= 20 0D 0A 00              306  LINE_BREAK DC.B ' ',CR,LF,0
+00001404= 2000 0000                307  SPACE DC.W ' ',0
+00001408= 2C00 0000                308  COMMA DC.W ',',0
+0000140C                           309  INSTRUCTION_ADDR DS.B 1
+0000140E= 494E 5354 5255 4...      310  INSTRUCTION_ADDR_MESSAGE DC.W 'INSTRUCTION ADDR',0
+00001420                           311  OPCODE DS.W 1
+00001422= 4F50 434F 4445 0000      312  OPCODE_MESSAGE DC.W 'OPCODE',0
+0000142A                           313  OPERAND1 DS.W 1
+0000142C= 4F50 4552 414E 4...      314  OPERAND1_MESSAGE DC.W 'OPERAND1',0
+00001436                           315  OPERAND2 DS.W 1
+00001438= 4F50 4552 414E 4...      316  OPERAND2_MESSAGE DC.W 'OPERAND2',0
+00001442                           317  
+00001442                           318  GOOD_BAD_FLAG DS.B 1
+00001443                           319  
+00001444                           320  START_ADDR DS.W 4
+0000144C                           321  END_ADDR DS.W 4
+00001454                           322      
+00001454                           323  
+00001454                           324  DONE
+00001454  43F8 133C                325      LEA DONE_MESSAGE, A1
+00001458  103C 000E                326      MOVE.B #14,D0 
+0000145C  4E4F                     327      TRAP #15
+0000145E                           328      END    START        ; last line of source
 
 No errors detected
 No warnings generated
@@ -300,45 +338,48 @@ No warnings generated
 SYMBOL TABLE INFORMATION
 Symbol-name         Value
 -------------------------
-COMMA               1374
+ASK_REPEAT          13BC
+CLEAR_REG           1260
+COMMA               1408
 CONV_NUM            107C
 CONV_STRING         1038
 CR                  D
-DATA                135E
+DATA                13F2
 DISPLAY_INVALID_HEX  105E
 DISPLAY_INVALID_INSTRUCTION  11C4
 DISPLAY_INVALID_ORDER  10C0
-DONE                13C0
+DONE                1454
 DONE_END_CONV       10AE
-DONE_MESSAGE        12DA
+DONE_MESSAGE        133C
 DONE_START_CONV     109C
-END_ADDR            13B8
-ENTER_MESSAGE       12F8
-GOOD_BAD_FLAG       13AE
-INSTRUCTION_ADDR    1378
-INSTRUCTION_ADDR_MESSAGE  137A
-INVALID_HEX         12A8
-INVALID_HEX_VAL     136A
-INVALID_MEM_ADDR    135C
-INVALID_ORDER       1328
+END_ADDR            144C
+ENTER_MESSAGE       1358
+GOOD_BAD_FLAG       1442
+INSTRUCTION_ADDR    140C
+INSTRUCTION_ADDR_MESSAGE  140E
+INVALID_HEX         130A
+INVALID_HEX_VAL     13FE
+INVALID_MEM_ADDR    13F0
+INVALID_ORDER       1388
 LF                  A
-LINE_BREAK          136C
+LINE_BREAK          1400
 NEEDS_NEW_SCREEN    11F8
-OPCODE              138C
-OPCODE_MESSAGE      138E
-OPERAND1            1396
-OPERAND1_MESSAGE    1398
-OPERAND2            13A2
-OPERAND2_MESSAGE    13A4
+OPCODE              1420
+OPCODE_MESSAGE      1422
+OPERAND1            142A
+OPERAND1_MESSAGE    142C
+OPERAND2            1436
+OPERAND2_MESSAGE    1438
 PREPARE_DISPLAY_BUFFER  10E4
 PRINT_INSTRUCTIONS  1108
 PRINT_SECOND_OPERAND  118E
-PROMPT_END          1261
+PROMPT_END          12C3
 PROMPT_FOR_END      101C
 PROMPT_FOR_START    1000
-PROMPT_START        1232
+PROMPT_START        1294
 PROMPT_USER_FOR_ENTER  1210
-SPACE               1370
+REACHED_END         1232
+SPACE               1404
 START               1000
-START_ADDR          13B0
+START_ADDR          1444
 
