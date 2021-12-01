@@ -151,7 +151,7 @@ PRINT_INSTRUCTIONS
     JSR NEEDS_NEW_SCREEN
     
     CMPA.L A3,A4 *-- check if at end address 
-    BLE DONE
+    BLE REACHED_END
  
     MOVE.W (A3)+,INSTRUCTION_ADDR *get first word in mem
     LEA INSTRUCTION_ADDR, A1
@@ -254,15 +254,52 @@ PROMPT_USER_FOR_ENTER
     MOVE.B   #5,D0			
     TRAP     #15			
     RTS	
+
+*--Ask if user wants to disassemble more memory--*
+REACHED_END
+    LEA SPACE, A1
+    MOVE.B #14,D0 
+    TRAP #15 
     
+    LEA ASK_REPEAT,A1 
+    MOVE.B #14,D0 
+    TRAP #15 
+    
+    MOVE.B #4,D0 
+    TRAP #15 Read num from the keyboard into D1.L
+    
+    CMPI.B #0, D1 0 = yes
+    BEQ CLEAR_REG
+    
+    CMPI.B #1,D1 1 = no
+    BEQ DONE
+    
+*--Clear all registers for reprocessing--*
+CLEAR_REG 
+    CLR D1
+    CLR D2
+    CLR D3
+    CLR D4
+    CLR D5
+    CLR D6
+    
+    MOVE.L #00000000,A0
+    MOVE.L #00000000,A1
+    MOVE.L #00000000,A3
+    MOVE.L #00000000,A4
+    MOVE.L #00000000,A5
+    MOVE.L #00000000,A6
+    
+    BRA PROMPT_FOR_START
 
 * Put variables and constants here
 PROMPT_START DC.B 'Please enter starting address in hexadecimal: ' ,0
 PROMPT_END DC.B 'Please enter ending address in hexadecimal (must be after starting): ' ,0
 INVALID_HEX DC.W 'Error: Address must be in valid hexadecimal' ,CR,LF,0
-DONE_MESSAGE DC.B 'Done printing instructions' ,CR,LF,0
+DONE_MESSAGE DC.B 'Done reading instructions' ,CR,LF,0
 ENTER_MESSAGE DC.W 'Please press enter to display new screen ' ,CR,LF,0
 INVALID_ORDER DC.W 'Error: ending address must come after starting',CR,LF,0
+ASK_REPEAT DC.W 'Disassemble another mem range? (Yes = 0, No = 1) ' ,0 
 INVALID_MEM_ADDR DS.W 1
 DATA DC.W ' DATA ',CR,LF,0
 INVALID_HEX_VAL DS.W 1 
@@ -282,10 +319,11 @@ GOOD_BAD_FLAG DS.B 1
 
 START_ADDR DS.W 4
 END_ADDR DS.W 4
-
+    
 DONE
     LEA DONE_MESSAGE, A1
     MOVE.B #14,D0 
-    TRAP #15 
+    TRAP #15
     END    START        ; last line of source
+
 
