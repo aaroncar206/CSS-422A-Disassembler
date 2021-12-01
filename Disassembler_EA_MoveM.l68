@@ -1,0 +1,377 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 11/30/2021 9:51:43 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      : 68K Disassembler EA Decoding Subroutine (MOVEM)
+00000000                             3  * Written by : Timothy Kozlov
+00000000                             4  * Date       : 11/30
+00000000                             5  * Description: Given the following registers, this subroutine prints
+00000000                             6  * out the EA/data portion of the MOVEM instruction.
+00000000                             7  *
+00000000                             8  * PRECONDITIONS:
+00000000                             9  * D6: The 16 bits for the MOVEM instruction
+00000000                            10  *-----------------------------------------------------------
+00000000                            11  * TESTING
+00000000                            12  *-----------------------------------------------------------
+00000000  =0000000D                 13  CR              EQU         $0D
+00000000  =0000000A                 14  LF              EQU         $0A
+00000000  =00000500                 15  AD_MASK         EQU         $500
+00000000  =00000502                 16  AD_MODE         EQU         $502
+00000000  =00000504                 17  AD_REG          EQU         $504
+00000000                            18  
+00000000                            19  *                MOVEM.L     A0-A7/D0-D7, (A0)             48D0 FFFF
+00000000                            20  *                MOVEM.L     A0-A1/D1/D3/D5, -(A1)         48E1 54C0
+00000000                            21  *                MOVEM.L     D1-D4/D7, $100                48F8 009E 0100
+00000000                            22  
+00000000                            23  
+00001000                            24  START           ORG         $1000
+00001000  2C3C 48F8009E             25                  MOVE.L      #$48F8009E,D6
+00001006  3ABC 0100                 26                  MOVE.W      #$0100,(A5)
+0000100A                            27  
+0000100A                            28                  
+0000100A                            29  *------------BEGIN DECODING---------------------------------------------
+0000100A                            30  
+0000100A  2A06                      31  PARSE_MOVEM_EA  MOVE.L      D6,D5
+0000100C  0285 0000FFFF             32                  ANDI.L      #$0000FFFF,D5
+00001012  31C5 0500                 33                  MOVE.W      D5,AD_MASK      Store mask <data> in AD_MASK
+00001016                            34                  
+00001016  2A06                      35                  MOVE.L      D6,D5
+00001018  183C 0010                 36                  MOVE.B      #16,D4          
+0000101C  E8A5                      37                  ASR.L       D4,D5           Filter out <data>
+0000101E  0245 003F                 38                  ANDI.W      #$003F,D5       Filter out non-<ea> bits
+00001022                            39                  
+00001022  3805                      40                  MOVE.W      D5,D4
+00001024  E684                      41                  ASR.L       #3,D4           
+00001026  31C4 0502                 42                  MOVE.W      D4,AD_MODE      Store mode in D4
+0000102A                            43                  
+0000102A  0245 0007                 44                  ANDI.W      #$7,D5          
+0000102E  31C5 0504                 45                  MOVE.W      D5,AD_REG       Store register in D5
+00001032                            46                  
+00001032                            47  *-------------------MASK, MODE, AND REGISTER ARE STORED-----------------
+00001032                            48  
+00001032  43F9 000012AC             49                  LEA         PRNT_MOVEM,A1
+00001038  103C 000E                 50                  MOVE.B      #14,D0
+0000103C  4E4F                      51                  TRAP        #15             Print MOVEM prefix (just for test purposes)
+0000103E                            52  
+0000103E  2A06                      53                  MOVE.L      D6,D5
+00001040  ED9D                      54                  ROL.L       #6,D5          
+00001042  0285 00000001             55                  ANDI.L      #1,D5           Get the direction bit
+00001048                            56                  
+00001048  BA3C 0000                 57                  CMP.B       #0,D5           
+0000104C  6700 001E                 58                  BEQ         REG_TO_MEM      Print register to memory
+00001050                            59                  
+00001050  4EB9 00001088             60                  JSR         PRINT_EA        Else memory to register
+00001056  43F9 000012A9             61                  LEA         PRNT_CMMA,A1
+0000105C  103C 000E                 62                  MOVE.B      #14,D0
+00001060  4E4F                      63                  TRAP        #15             Print comma
+00001062  4EB9 000011EE             64                  JSR         PRINT_MASK
+00001068  FFFF FFFF                 65                  SIMHALT
+0000106C                            66  
+0000106C                            67  
+0000106C  4EB9 000011EE             68  REG_TO_MEM      JSR         PRINT_MASK
+00001072  43F9 000012A9             69                  LEA         PRNT_CMMA,A1
+00001078  103C 000E                 70                  MOVE.B      #14,D0
+0000107C  4E4F                      71                  TRAP        #15             Print comma
+0000107E  4EB9 00001088             72                  JSR         PRINT_EA
+00001084  FFFF FFFF                 73                  SIMHALT
+00001088                            74  
+00001088                            75  *------------------SUBROUTINE TO PRINT EA TO CONSOLE--------------------
+00001088                            76  
+00001088  3638 0502                 77  PRINT_EA        MOVE.W      AD_MODE,D3      Move mode bits to d3
+0000108C  3838 0504                 78                  MOVE.W      AD_REG,D4       Move reg bits to d4
+00001090                            79                  
+00001090                            80  *------------------LET ZACHS CODE HANDLE THE REST-----------------------
+00001090                            81                  
+00001090  B63C 0000                 82  MODE_P      CMP.B   #%00000000,D3   * TEST FOR 000: Dn
+00001094  6700 002E                 83              BEQ     DN_MODE
+00001098                            84              
+00001098  B63C 0001                 85              CMP.B   #%00000001,D3   * TEST FOR 001: An
+0000109C  6700 0036                 86              BEQ     AN_MODE
+000010A0                            87              
+000010A0  B63C 0002                 88              CMP.B   #%00000010,D3   * TEST FOR 010: (An)
+000010A4  6700 003E                 89              BEQ     ANIND_MODE
+000010A8                            90              
+000010A8  B63C 0003                 91              CMP.B   #%00000011,D3   * TEST FOR 011: (An)+
+000010AC  6700 0046                 92              BEQ     ANINC_MODE
+000010B0                            93              
+000010B0  B63C 0004                 94              CMP.B   #%00000100,D3   * TEST FOR 100: -(An)
+000010B4  6700 004E                 95              BEQ     ANDEC_MODE
+000010B8                            96              
+000010B8  B63C 0007                 97              CMP.B   #%00000111,D3   * TEST FOR 111: #<data>, (xxx).W, or (xxx).L (or unsupported!)
+000010BC  6700 0056                 98              BEQ     ABSDAT_MODE
+000010C0                            99              
+000010C0  6000 012A                100              BRA     UNSUPP_MODE     * If we made it here, assume an unsupported mode!
+000010C4                           101              
+000010C4                           102              
+000010C4  43F9 00001294            103  DN_MODE     LEA     PRNT_D,A1
+000010CA  103C 000E                104              MOVE.B  #14,D0
+000010CE  4E4F                     105              TRAP    #15
+000010D0                           106              
+000010D0  6000 005E                107              BRA     REG_P
+000010D4                           108              
+000010D4  43F9 00001292            109  AN_MODE     LEA     PRNT_A,A1
+000010DA  103C 000E                110              MOVE.B  #14,D0
+000010DE  4E4F                     111              TRAP    #15
+000010E0                           112              
+000010E0  6000 004E                113              BRA     REG_P
+000010E4                           114  
+000010E4  43F9 00001296            115  ANIND_MODE  LEA     PRNT_AI,A1
+000010EA  103C 000E                116              MOVE.B  #14,D0
+000010EE  4E4F                     117              TRAP    #15
+000010F0                           118              
+000010F0  6000 003E                119              BRA     REG_P
+000010F4                           120  
+000010F4  43F9 00001296            121  ANINC_MODE  LEA     PRNT_AI,A1  * As of now this is the same as indirect, postdec added after register
+000010FA  103C 000E                122              MOVE.B  #14,D0
+000010FE  4E4F                     123              TRAP    #15
+00001100                           124              
+00001100  6000 002E                125              BRA     REG_P
+00001104                           126  
+00001104  43F9 0000129E            127  ANDEC_MODE  LEA     PRNT_DC,A1
+0000110A  103C 000E                128              MOVE.B  #14,D0
+0000110E  4E4F                     129              TRAP    #15
+00001110                           130              
+00001110  6000 001E                131              BRA     REG_P
+00001114                           132              
+00001114                           133  
+00001114                           134  * DATA / ABSOLUTE ADDRESSING HANDLING (Mode was 111 in D3; need to chk. D4 reg bits for behavior)
+00001114  B83C 0004                135  ABSDAT_MODE CMP.B   #%00000100,D4 * TEST FOR 100: #<data>
+00001118  6700 005A                136              BEQ     DATA_MODE
+0000111C                           137              
+0000111C  B83C 0000                138              CMP.B   #%00000000,D4 * TEST FOR 000: (xxx).W
+00001120  6700 0076                139              BEQ     ABSW_MODE
+00001124                           140              
+00001124  B83C 0001                141              CMP.B   #%00000001,D4 * TEST FOR 001: (xxx).L
+00001128  6700 007E                142              BEQ     ABSL_MODE
+0000112C                           143              
+0000112C  6000 00BE                144              BRA     UNSUPP_MODE   * If the register is some other val, unsupported!
+00001130                           145              
+00001130                           146              * 3: Process the REGISTER BITS: (IN D4)
+00001130  1204                     147  REG_P       MOVE.B  D4,D1   * Load the register value into D1 for display.
+00001132  103C 0003                148              MOVE.B  #3,D0
+00001136  4E4F                     149              TRAP    #15
+00001138                           150              
+00001138  B63C 0002                151              CMP.B   #%00000010,D3
+0000113C  6700 0016                152              BEQ     END_ONE
+00001140                           153              
+00001140  B63C 0004                154              CMP.B   #%00000100,D3
+00001144  6700 000E                155              BEQ     END_ONE
+00001148                           156              
+00001148  B63C 0003                157              CMP.B   #%00000011,D3
+0000114C  6700 0016                158              BEQ     END_TWO
+00001150                           159              
+00001150  6000 009A                160              BRA     FINISH  * Additional char after register unnecessary, branch to finish
+00001154                           161              
+00001154  43F9 00001299            162  END_ONE     LEA     PRNT_CL,A1
+0000115A  103C 000E                163              MOVE.B  #14,D0
+0000115E  4E4F                     164              TRAP    #15
+00001160                           165              
+00001160  6000 008A                166              BRA     FINISH
+00001164                           167  
+00001164  43F9 0000129B            168  END_TWO     LEA     PRNT_IN,A1
+0000116A  103C 000E                169              MOVE.B  #14,D0
+0000116E  4E4F                     170              TRAP    #15
+00001170                           171              
+00001170  6000 007A                172              BRA     FINISH
+00001174                           173  
+00001174                           174  * #<DATA>; RELIES ON D5 CONTAINING SIZE VALUE OF THE INSTRUCTION! (So we know how much data to grab, then what to increment A5 by! (word or long))
+00001174                           175      * If this contains 0, this will not work in this state. D5 MUST have val 1-3 at this point!
+00001174  43F9 000012A2            176  DATA_MODE   LEA     PRNT_DT,A1 * Print '#$'
+0000117A  103C 000E                177              MOVE.B  #14,D0
+0000117E  4E4F                     178              TRAP    #15
+00001180                           179              
+00001180  BA3C 0001                180              CMP.B   #1,D5
+00001184  6700 0032                181              BEQ     BYTE
+00001188                           182              
+00001188  BA3C 0002                183              CMP.B   #2,D5
+0000118C  6700 003E                184              BEQ     WORD
+00001190                           185              
+00001190  BA3C 0003                186              CMP.B   #3,D5
+00001194  6700 0046                187              BEQ     LONG
+00001198                           188              
+00001198                           189  * (xxx).W;            
+00001198  43F9 000012A5            190  ABSW_MODE   LEA     PRNT_HX,A1 * Print '$'
+0000119E  103C 000E                191              MOVE.B  #14,D0
+000011A2  4E4F                     192              TRAP    #15
+000011A4                           193              
+000011A4  6000 0026                194              BRA     WORD
+000011A8                           195              
+000011A8                           196  * (xxx).L; Assembler uses this when it sign extends automatically over (xxx).W           
+000011A8  43F9 000012A5            197  ABSL_MODE   LEA     PRNT_HX,A1 * Print '$'
+000011AE  103C 000E                198              MOVE.B  #14,D0
+000011B2  4E4F                     199              TRAP    #15
+000011B4                           200              
+000011B4  6000 0026                201              BRA     LONG
+000011B8                           202  
+000011B8                           203  * Expects format created by assembled machine code, NOT how it is just pushed to memory by (An)!            
+000011B8  321D                     204  BYTE        MOVE.W  (A5)+,D1    * Move word of data from curr opcode word pointer to D1, then increment pointer a word.
+000011BA  143C 0010                205              MOVE.B  #16,D2      * Prepare to display a hex value
+000011BE                           206              
+000011BE  C27C 00FF                207              AND.W   #%0000000011111111,D1   * Discard potential word part from byte
+000011C2  103C 000F                208              MOVE.B  #15,D0      * Set the task to 15
+000011C6  4E4F                     209              TRAP    #15         * Print the value.
+000011C8                           210  
+000011C8  6000 0022                211              BRA     FINISH
+000011CC                           212  
+000011CC  321D                     213  WORD        MOVE.W  (A5)+,D1    * Move word of data from curr opcode word pointer to D1, then increment pointer a word.
+000011CE  143C 0010                214              MOVE.B  #16,D2      * Prepare to display a hex value
+000011D2                           215              
+000011D2  103C 000F                216              MOVE.B  #15,D0      * Set the task to 15
+000011D6  4E4F                     217              TRAP    #15         * Print the value.
+000011D8                           218  
+000011D8  6000 0012                219              BRA     FINISH
+000011DC                           220  
+000011DC  221D                     221  LONG        MOVE.L  (A5)+,D1    * Move longword of data from curr opcode word pointer to D1, then increment pointer a longword.
+000011DE  143C 0010                222              MOVE.B  #16,D2      * Prepare to display a hex value
+000011E2                           223              
+000011E2  103C 000F                224              MOVE.B  #15,D0      * Set the task to 15
+000011E6  4E4F                     225              TRAP    #15         * Print the value.
+000011E8                           226              
+000011E8  6000 0002                227              BRA     FINISH
+000011EC                           228        
+000011EC                           229              * 4: UNSUPPORTED BRANCH:
+000011EC                           230  UNSUPP_MODE
+000011EC                           231  FINISH      
+000011EC                           232  
+000011EC                           233  *-----------------------END ZACHS CODE -------------------------------
+000011EC                           234  
+000011EC                           235  
+000011EC  4E75                     236  PRINT_EA_DONE   RTS
+000011EE                           237  
+000011EE                           238  
+000011EE                           239  *------------------SUBROUTINE TO PRINT MASK TO CONSOLE------------------
+000011EE                           240  
+000011EE  163C 0000                241  PRINT_MASK      MOVE.B      #0,D3           Flag=0
+000011F2  1A3C 0008                242  PRINT_MASK_A    MOVE.B      #8,D5           Loop D5=8
+000011F6  BA3C 0000                243  PRINT_MASK_A_LP CMP.B       #0,D5           Loop D5>0
+000011FA  6700 0046                244                  BEQ         PRINT_MASK_D                    
+000011FE                           245  
+000011FE  3838 0500                246                  MOVE.W      AD_MASK,D4           
+00001202  EB7C                     247                  ROL.W       D5,D4
+00001204  0244 0001                248                  ANDI.W      #1,D4           Store the D5th A-register in D4
+00001208  5305                     249                  SUBI.B      #1,D5           Loop D5--
+0000120A                           250                  
+0000120A  B83C 0000                251                  CMP.B       #0,D4
+0000120E  67E6                     252                  BEQ         PRINT_MASK_A_LP Do nothing if bit is zero
+00001210                           253                  
+00001210  B63C 0000                254                  CMP.B       #0,D3           First print? Skip!
+00001214  6700 000E                255                  BEQ         SKIP_SLASH_A
+00001218  43F9 000012A7            256                  LEA         PRNT_SLASH,A1
+0000121E  103C 000E                257                  MOVE.B      #14,D0
+00001222  4E4F                     258                  TRAP        #15             Print slash
+00001224                           259                  
+00001224                           260                  
+00001224  43F9 00001292            261  SKIP_SLASH_A    LEA         PRNT_A,A1
+0000122A  103C 000E                262                  MOVE.B      #14,D0
+0000122E  4E4F                     263                  TRAP        #15             Print 'A'
+00001230                           264                  
+00001230  103C 0003                265                  MOVE.B      #3,D0
+00001234  123C 0007                266                  MOVE.B      #7,D1
+00001238  9205                     267                  SUB.B       D5,D1
+0000123A  4E4F                     268                  TRAP        #15             Print register
+0000123C  163C 0001                269                  MOVE.B      #1,D3           Flag=True (we printed something)
+00001240                           270                  
+00001240  60B4                     271                  BRA         PRINT_MASK_A_LP
+00001242                           272  
+00001242                           273      
+00001242  1A3C 0000                274  PRINT_MASK_D    MOVE.B      #0,D5           Loop D5=0
+00001246  BA3C 0008                275  PRINT_MASK_D_LP CMP.B       #8,D5           Loop D5<8
+0000124A  6700 0044                276                  BEQ         PRINT_MASK_DONE
+0000124E                           277                  
+0000124E  3838 0500                278                  MOVE.W      AD_MASK,D4
+00001252  EA7C                     279                  ROR.W       D5,D4
+00001254  0244 0001                280                  ANDI.W      #1,D4           Store the D5th D-register in D4
+00001258  5205                     281                  ADDI.B      #1,D5           Loop D5++
+0000125A                           282  
+0000125A  B83C 0000                283                  CMP.B       #0,D4
+0000125E  67E6                     284                  BEQ         PRINT_MASK_D_LP Do nothing if bit is zero
+00001260                           285  
+00001260  B63C 0000                286                  CMP.B       #0,D3           First D-register AND never printed before? Skip!
+00001264  6700 000E                287                  BEQ         SKIP_SLASH_D
+00001268  43F9 000012A7            288                  LEA         PRNT_SLASH,A1
+0000126E  103C 000E                289                  MOVE.B      #14,D0
+00001272  4E4F                     290                  TRAP        #15
+00001274                           291                  
+00001274  43F9 00001294            292  SKIP_SLASH_D    LEA         PRNT_D,A1
+0000127A  103C 000E                293                  MOVE.B      #14,D0
+0000127E  4E4F                     294                  TRAP        #15             Print 'D'
+00001280                           295                  
+00001280  103C 0003                296                  MOVE.B      #3,D0
+00001284  1205                     297                  MOVE.B      D5,D1
+00001286  5301                     298                  SUB.B       #1,D1
+00001288  4E4F                     299                  TRAP        #15             Print register
+0000128A  163C 0001                300                  MOVE.B      #1,D3           Flag = true
+0000128E                           301                  
+0000128E  60B6                     302                  BRA         PRINT_MASK_D_LP
+00001290                           303  
+00001290  4E75                     304  PRINT_MASK_DONE RTS
+00001292                           305  
+00001292= 41 00                    306  PRNT_A          DC.B        'A',0
+00001294= 44 00                    307  PRNT_D          DC.B        'D',0
+00001296= 28 41 00                 308  PRNT_AI         DC.B        '(A',0
+00001299= 29 00                    309  PRNT_CL         DC.B        ')',0
+0000129B= 29 2B 00                 310  PRNT_IN         DC.B        ')+',0
+0000129E= 2D 28 41 00              311  PRNT_DC         DC.B        '-(A',0
+000012A2                           312  
+000012A2= 23 24 00                 313  PRNT_DT         DC.B        '#$',0
+000012A5= 24 00                    314  PRNT_HX         DC.B        '$',0
+000012A7= 2F 00                    315  PRNT_SLASH      DC.B        '/',0
+000012A9= 2C 20 00                 316  PRNT_CMMA       DC.B        ', ',0
+000012AC= 4D 4F 56 45 4D 2E ...    317  PRNT_MOVEM      DC.B        'MOVEM.X ',0
+000012B5                           318                  END         START
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ABSDAT_MODE         1114
+ABSL_MODE           11A8
+ABSW_MODE           1198
+AD_MASK             500
+AD_MODE             502
+AD_REG              504
+ANDEC_MODE          1104
+ANINC_MODE          10F4
+ANIND_MODE          10E4
+AN_MODE             10D4
+BYTE                11B8
+CR                  D
+DATA_MODE           1174
+DN_MODE             10C4
+END_ONE             1154
+END_TWO             1164
+FINISH              11EC
+LF                  A
+LONG                11DC
+MODE_P              1090
+PARSE_MOVEM_EA      100A
+PRINT_EA            1088
+PRINT_EA_DONE       11EC
+PRINT_MASK          11EE
+PRINT_MASK_A        11F2
+PRINT_MASK_A_LP     11F6
+PRINT_MASK_D        1242
+PRINT_MASK_DONE     1290
+PRINT_MASK_D_LP     1246
+PRNT_A              1292
+PRNT_AI             1296
+PRNT_CL             1299
+PRNT_CMMA           12A9
+PRNT_D              1294
+PRNT_DC             129E
+PRNT_DT             12A2
+PRNT_HX             12A5
+PRNT_IN             129B
+PRNT_MOVEM          12AC
+PRNT_SLASH          12A7
+REG_P               1130
+REG_TO_MEM          106C
+SKIP_SLASH_A        1224
+SKIP_SLASH_D        1274
+START               1000
+UNSUPP_MODE         11EC
+WORD                11CC
