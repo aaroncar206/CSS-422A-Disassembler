@@ -380,6 +380,51 @@ IS_BEQ
     TRAP    #15
     SIMHALT  
 
+DISP *8 bit displacement field
+    MOVE.L  D3,D4
+    LSL.W   #8,D4
+    LSR.W   #8,D4   *Holds displacement value
+    AND.W   #$00FF,D4
+    
+    CMP.W   #$00,D4
+    BEQ     DISP_16
+    CMP.W   #$FF,D4
+    BEQ     DISP_32
+
+    MOVEA.W A0,A5
+    MOVE.W  A5,D6 *Holds next instruction address
+    NOT.B   D4
+    ADD.B   #%01,D4
+    
+    SUB.W   D4,D6
+    MOVE.W  D6,D1
+    MOVE.B  #3,D0
+    TRAP    #15
+    SIMHALT    
+DISP_16
+    MOVE.W  (A0)+,D4
+    MOVEA.L A0,A5
+    MOVE.W  A5,D6 *Holds next instruction address
+    NOT.B   D4
+    ADD.B   #%01,D4
+    
+    SUB.W   D4,D6
+    MOVE.W  D6,D1
+    MOVE.B  #3,D0
+    TRAP    #15
+    SIMHALT
+DISP_32    
+    MOVE.L  (A0)+,D4
+    MOVEA.L A0,A5
+    MOVE.W  A5,D6 *Holds next instruction address
+    NOT.B   D4
+    ADD.B   #%01,D4
+    
+    SUB.W   D4,D6
+    MOVE.W  D6,D1
+    MOVE.B  #3,D0
+    TRAP    #15
+    SIMHALT
 OP_10   *OR,SUB
     MOVE.L  D3,D4
     LSL.W   #2,D4
@@ -569,19 +614,15 @@ ADDA_L
     *Proceed to EA Subroutine    
     
 OP_1110 *LSL/LSR,ASL/ASR,ROL/ROR
+
+    *Memory Shift Check bits 6,7
     MOVE.L  D3,D4
-    *Register Shift check bits 4,3
-    MOVE.B  #11,D6
-    LSL.W   D6,D4
-    MOVE.B  #17,D6
+    LSL.W   #8,D4
+    MOVE.L  #14,D6
     LSR.W   D6,D4
     
-    CMP.B   #%00,D4 *ASL/ASR
-    BEQ     A_REG
-    CMP.B   #%01,D4 *LSL/LSR
-    BEQ     L_REG
-    CMP.B   #%11,D4 *ROL/ROR
-    BEQ     R_REG
+    CMP.B   #%11,D4
+    BNE     REG
     *Memory Shift check bits 11,10,9
     MOVE.L  D3,D4
     LSL.W   #4,D4
@@ -594,6 +635,21 @@ OP_1110 *LSL/LSR,ASL/ASR,ROL/ROR
     BEQ     L_MEM
     CMP.B   #%011,D4 *ROL/ROR
     BEQ     R_MEM
+    
+    *Register Shift check bits 4,3
+REG MOVE.L  D3,D4
+    MOVE.B  #11,D6
+    LSL.W   D6,D4
+    MOVE.B  #17,D6
+    LSR.W   D6,D4
+    
+    CMP.B   #%00,D4 *ASL/ASR
+    BEQ     A_REG
+    CMP.B   #%01,D4 *LSL/LSR
+    BEQ     L_REG
+    CMP.B   #%11,D4 *ROL/ROR
+    BEQ     R_REG
+    
     
     BRA     INVALID_OP
     
@@ -807,6 +863,7 @@ PRNT_ROR    DC.B    'ROR',0
 *D4 = copy of instruction
 *D6 = num of bits to shift
     END    START        ; last line of source
+
 
 
 
