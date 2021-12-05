@@ -871,7 +871,7 @@ OP_1110 *LSL/LSR,ASL/ASR,ROL/ROR (ADDED: Using D2 to track Mem/Reg state (0 = Re
 REG MOVE.L  D3,D4
     MOVE.B  #11,D6
     LSL.W   D6,D4
-    MOVE.B  #17,D6
+    MOVE.B  #14,D6
     LSR.W   D6,D4
     
     CMP.B   #%00,D4 *ASL/ASR
@@ -1508,6 +1508,7 @@ PRNT_ER DC.B    'ERROR: Unsupported EA Mode',0
 *D4 = copy of instruction
 *D6 = num of bits to shift
     END    START        ; last line of source
+
 
 
 
