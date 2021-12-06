@@ -132,7 +132,7 @@ DISPLAY_INVALID_ORDER
     
     BRA PROMPT_FOR_END
        
-*-- Use print buffer to print out instructions. Set good/bad flag (D7) upon 
+*-- Use print buffer pointer to print out instructions. Set good/bad flag (D7) upon 
 *-- invalid instruction and report back to here. A3 is opcode pointer. 
 PRINT_INSTRUCTIONS  
     JSR NEEDS_NEW_SCREEN
