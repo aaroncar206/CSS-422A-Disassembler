@@ -114,7 +114,7 @@ DONE_END_CONV
     CMPA.L A3,A4 check if starting address is less than ending 
     BMI DISPLAY_INVALID_ORDER
     
-    BRA PREPARE_DISPLAY_BUFFER
+    BRA PRINT_INSTRUCTIONS
     *-- op code person takes over from here--
     *-- derive opcodes starting from start address --*
     
@@ -131,25 +131,16 @@ DISPLAY_INVALID_ORDER
     MOVE.W #$0000,A4 clear A4 for reprocessing
     
     BRA PROMPT_FOR_END
-
-* Prepare display buffer (these variables will be filled with real memory upon integration)
-PREPARE_DISPLAY_BUFFER 
-    MOVE.W INSTRUCTION_ADDR_MESSAGE, INSTRUCTION_ADDR  *-- make placeholder for instruction address
-    MOVE.W OPCODE_MESSAGE, OPCODE *-- make placeholder for opcode
-    
-    MOVE.W #OPERAND1_MESSAGE, OPERAND1 *-- make placeholder for first operand 
-    MOVE.W #OPERAND2_MESSAGE, OPERAND2 *-- make placeholder for second operand 
-        
-*-- Traverse through mock data in memory and print out until ending address
-*-- NOTE** displays random YY's which is okay for now. Intent is to demonstrate 
-*-- the essence of I/O behavior for assembler. 
+       
+*-- Use print buffer to print out instructions. Set good/bad flag (D7) upon 
+*-- invalid instruction and report back to here. Tim - A3 is now our print buffer
 PRINT_INSTRUCTIONS  
     JSR NEEDS_NEW_SCREEN
     
     CMPA.L A3,A4 *-- check if at end address 
     BLE REACHED_END
  
-    MOVE.W A3, D1
+    MOVE.W A3, D1 *-- print instruction address
     MOVE.B #16,D2
     MOVE.B #15,D0 
     TRAP #15 
@@ -160,38 +151,11 @@ PRINT_INSTRUCTIONS
         
     MOVE.W (A3)+, D3
     JSR START_OP
-*    MOVE.W (A3)+,OPCODE *get next word in mem
-*    LEA OPCODE, A1
-*    MOVE.B #14,D0 
-*    TRAP #15 
     
     LEA SPACE, A1
     MOVE.B #14,D0 
     TRAP #15 
     
-*    CMP.B #1, D7 *-- check for valid operand1
-*    BEQ DISPLAY_INVALID_INSTRUCTION
-    
-    LEA LINE_BREAK,A1
-    MOVE.B #14,D0 
-    TRAP #15
-    
-    BRA PRINT_INSTRUCTIONS
-    
-*-- Print second operand if needed
-PRINT_SECOND_OPERAND
-    CMP.B #1, D5 *-- check for valid operand2
-    BEQ DISPLAY_INVALID_INSTRUCTION
-    
-    LEA COMMA, A1
-    MOVE.B #14,D0 
-    TRAP #15
-    
-    MOVE.W (A3)+,OPERAND2 *get next word in mem
-    LEA OPERAND2, A1
-    MOVE.B #14,D0 
-    TRAP #15 
-
     LEA LINE_BREAK,A1
     MOVE.B #14,D0 
     TRAP #15
