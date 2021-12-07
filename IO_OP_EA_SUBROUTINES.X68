@@ -154,7 +154,14 @@ PRINT_INSTRUCTIONS
     MOVEA.L #PBUFF,A6   * Printbuff is A6
 
     MOVE.W (A3)+, D3
+    
+    ** SAVE DATA REGISTERS (Except D7)
+    MOVEM.L D0-D6,-(SP)
+    
     JSR START_OP
+    
+    MOVEM.L (SP)+,D0-D6
+    ** LOAD DATA REGISTERS (Except D7)
 
     CMP #1,D7
     BEQ DISPLAY_INVALID_INSTRUCTION
@@ -164,6 +171,7 @@ PRINT_INSTRUCTIONS
     MOVE.B #14, D0
     TRAP #15            * Print print buffer
     
+    * Need space after print buffer? **********************************************
     LEA SPACE, A1
     MOVE.B #14,D0 
     TRAP #15 
@@ -1738,7 +1746,9 @@ DONE
 
 
 *~Font name~Courier New~
+
+
+*~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~
 *~Tab size~4~
-
