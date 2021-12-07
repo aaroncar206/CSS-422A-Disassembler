@@ -2,6 +2,7 @@
 *-----------------------------------------------------------
 CR EQU $0D
 LF EQU $0A
+PBUFF EQU $900
 
 
 *----- PRECONDITIONS ------*
@@ -149,8 +150,19 @@ PRINT_INSTRUCTIONS
     MOVE.B #14,D0 
     TRAP #15 
         
+    MOVE.B #0,D7        * Invalid flag is set to zero
+    MOVEA.L #PBUFF,A6   * Printbuff is A6
+
     MOVE.W (A3)+, D3
     JSR START_OP
+
+    CMP #1,D7
+    BEQ DISPLAY_INVALID_INSTRUCTION
+
+    MOVE.B #0, (A6)     * Add terminator to print buffer
+    MOVEA.L #PBUFF,A1
+    MOVE.B #14, D0
+    TRAP #15            * Print print buffer
     
     LEA SPACE, A1
     MOVE.B #14,D0 
@@ -164,20 +176,20 @@ PRINT_INSTRUCTIONS
     
 *Display XXXXXXXX DATA YYYY if memory cannot be decoded to legitimate instruction   
 DISPLAY_INVALID_INSTRUCTION 
-    MOVE.W (A3),INVALID_MEM_ADDR *get invalid word in mem
-    LEA INVALID_MEM_ADDR, A1
-    MOVE.B #14,D0 
-    TRAP #15 
 
     LEA DATA, A1
     MOVE.B #14,D0 
     TRAP #15 
+
+    MOVE.B #16, D2
+    MOVE.W (A3),D1
+    MOVE.B #15, D0
+    TRAP #15            * Print print buffer
     
-    MOVE.W (A3),INVALID_HEX_VAL *get next word in mem
-    LEA INVALID_HEX_VAL, A1
+    LEA LINE_BREAK,A1
     MOVE.B #14,D0 
-    TRAP #15 
-    
+    TRAP #15
+
     BRA PRINT_INSTRUCTIONS
          
 *--Check if output reaches the end of screen 
@@ -241,8 +253,7 @@ CLEAR_REG
     MOVE.L #00000000,A6
     
     BRA PROMPT_FOR_START
-    
-* OP CODE SUBROUTINE
+
 START_OP
 
 NOP
@@ -251,8 +262,7 @@ NOP
     BNE     RTS
     *Print instruction to output
     LEA     PRNT_NOP,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR PRINT_BUFF
     RTS *Return to I/O subroutine to find next instruction
 RTS
     MOVE.W  #$4E75,D4
@@ -260,8 +270,7 @@ RTS
     BNE     FIND_OP
     *Print instruction
     LEA     PRNT_RTS,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR PRINT_BUFF
     RTS
 
 FIND_OP *determine op code based on first 2 bits
@@ -292,16 +301,14 @@ OP_00 *Determine if MOVE or MOVEA op code
 IS_MOVE
     *Print MOVE
     LEA     PRNT_MOVE,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR PRINT_BUFF
 
     BRA     MOVE_SIZE
 
 IS_MOVEA
     *Print MOVEA
     LEA     PRNT_MOVEA,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR PRINT_BUFF
 MOVE_SIZE
     MOVE.W  D3,D4
     MOVE.B  #14,D6
@@ -322,6 +329,9 @@ MOVE_B
     JSR PRINT_B
     *Proceed to EA Subroutine
     JSR EA_SRC
+    LEA COMMA,A1
+    JSR PRINT_BUFF
+
     JSR EA_DEST
     
     RTS * Done printing move
@@ -330,6 +340,8 @@ MOVE_W
     JSR PRINT_W
     *Proceed to EA Subroutine
     JSR EA_SRC 
+    LEA COMMA,A1
+    JSR PRINT_BUFF
     JSR EA_DEST
 
     RTS
@@ -338,6 +350,8 @@ MOVE_L
     JSR PRINT_L
     *Proceed to EA Subroutine
     JSR EA_SRC
+    LEA COMMA,A1
+    JSR PRINT_BUFF
     JSR EA_DEST
 
     RTS
@@ -367,8 +381,7 @@ OP_0111 *MOVEQ
 
     *Print MOVEQ
     LEA     PRNT_MOVEQ,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR PRINT_BUFF
     
     MOVE.L  D3,D4
     LSL.W   #8,D4
@@ -378,12 +391,10 @@ OP_0111 *MOVEQ
     ** Print # in front
     
     LEA     PRNT_Q,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR PRINT_BUFF
     
     MOVE.L  D4,D1
-    MOVE.B  #3,D0
-    TRAP    #15
+    JSR     PRINT_HEXBUFF
     
     *** Move reg. bits into a bitfield for EA
     MOVE.W  D3,D4
@@ -418,8 +429,7 @@ OP_0100 *MOVEM, LEA, NOT, JSR
     
     * Is LEA
     LEA     PRNT_LEA,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     * HANDLE OPERANDS
     MOVE.B  #3,D5 * Size operation is always longword for LEA, so set here.
     
@@ -434,6 +444,9 @@ OP_0100 *MOVEM, LEA, NOT, JSR
     
     MOVEM.L D0-D7,-(SP) * Move register contents to stack
     
+    LEA COMMA,A1
+    JSR PRINT_BUFF
+
     JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
     
     * MOVEM RETURN
@@ -450,8 +463,7 @@ IS_NOT
     BNE     INVALID_OP
     
     LEA     PRNT_NOT,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR PRINT_BUFF
     
     MOVE.L  D3,D4
     LSL.W   #8,D4
@@ -489,9 +501,8 @@ OP_01001
     CMP.W   #%0100111010,D4 *Check if JSR
     BNE     IS_MOVEM
     LEA     PRNT_JSR,A1
-    MOVE.B  #14,D0
-    TRAP    #15
-    JSR EA_SRC
+    JSR     PRINT_BUFF
+    JSR     EA_SRC
     RTS     *Proceed to EA Subroutine    
 IS_MOVEM
     *Check bits 9,8,7 to validate   
@@ -503,8 +514,7 @@ IS_MOVEM
     BNE     INVALID_OP
     
     LEA     PRNT_MOVEM,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR	PRINT_BUFF
     
     MOVE.L  D3,D4
     MOVE.B  #9,D6
@@ -534,8 +544,7 @@ OP_0101 *ADDQ
 
     *Print ADDQ
     LEA     PRNT_ADDQ,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR	    PRINT_BUFF
     
     MOVE.L  D3,D4
     LSL.W   #8,D4   *Remove first 8 bits
@@ -571,12 +580,10 @@ ADDQ_DATA
     
     *Print data
     LEA     PRNT_Q,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     
     MOVE.W  D4,D1
-    MOVE.B  #3,D0
-    TRAP    #15
+    JSR     PRINT_HEXBUFF
     
     * Handle EA
     JSR     EA_SRC
@@ -605,27 +612,23 @@ OP_0110
     BRA     INVALID_OP
 IS_BRA
     LEA     PRNT_BRA,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     JSR DISP
     RTS
     
 IS_BGT
     LEA     PRNT_BGT,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     JSR DISP
     RTS
 IS_BLE
     LEA     PRNT_BLE,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     JSR DISP
     RTS
 IS_BEQ  
     LEA     PRNT_BEQ,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     JSR DISP
     RTS  
 *------------SIZE AFFECT DISP VALUE?---------------
@@ -647,9 +650,10 @@ DISP *8 bit displacement field
     
     SUB.W   D4,D6 
     MOVE.L  D6,D1
-    MOVE.B  #16,D2
-    MOVE.B  #15,D0
-    TRAP    #15
+    *=MOVE.B  #16,D2
+    *=MOVE.B  #15,D0
+    *TRAP    #15
+    JSR     PRINT_HEXBUFF
     RTS    
 DISP_16
     MOVE.W  (A3)+,D4
@@ -660,9 +664,10 @@ DISP_16
     
     SUB.W   D4,D6
     MOVE.L  D6,D1
-    MOVE.B  #16,D2
-    MOVE.B  #15,D0
-    TRAP    #15
+    *=MOVE.B  #16,D2
+    *=MOVE.B  #15,D0
+    *TRAP    #15
+    JSR     PRINT_HEXBUFF
     RTS
 DISP_32    
     MOVE.L  (A3)+,D4
@@ -673,9 +678,10 @@ DISP_32
     
     SUB.W   D4,D6
     MOVE.L  D6,D1
-    MOVE.B  #16,D2
-    MOVE.B  #15,D0
-    TRAP    #15
+    JSR     PRINT_HEXBUFF
+    * MOVE.B  #16,D2
+    * MOVE.B  #15,D0
+    * TRAP    #15
     RTS
 OP_10   *OR,SUB
     MOVE.L  D3,D4
@@ -691,8 +697,7 @@ OP_10   *OR,SUB
     BRA     INVALID_OP
 IS_OR
     LEA     PRNT_OR,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     
     MOVE.L  D3,D4
     LSL.W   #7,D4
@@ -762,8 +767,7 @@ OR_L
     
 IS_SUB
     LEA     PRNT_SUB,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
 
     MOVE.L  D3,D4
     LSL.W   #7,D4
@@ -843,8 +847,7 @@ OP_11
     BRA     INVALID_OP
 OP_1100 *AND
     LEA     PRNT_AND,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
 
     MOVE.L  D3,D4
     LSL.W   #7,D4
@@ -948,13 +951,11 @@ OP_1101 *ADD,ADDA
 
 IS_ADD
     LEA     PRNT_ADD,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     RTS
 IS_ADDA
     LEA     PRNT_ADDA,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     RTS   
 
 * For these, handle EA first, then Data reg.
@@ -1096,8 +1097,7 @@ A_MEM
     
 IS_ASR
     LEA     PRNT_ASR,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     A_SIZE
 
@@ -1106,8 +1106,7 @@ IS_ASR
 
 IS_ASL
     LEA     PRNT_ASL,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     A_SIZE
 
@@ -1146,8 +1145,7 @@ L_MEM
     
 IS_LSR
     LEA     PRNT_LSR,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     L_SIZE
     
@@ -1156,8 +1154,7 @@ IS_LSR
 
 IS_LSL
     LEA     PRNT_LSL,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     L_SIZE 
     
@@ -1198,8 +1195,7 @@ R_MEM
     
 IS_ROR
     LEA     PRNT_ROR,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     R_SIZE  
 
@@ -1208,8 +1204,7 @@ IS_ROR
 
 IS_ROL
     LEA     PRNT_ROL,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     R_SIZE 
 
@@ -1257,20 +1252,17 @@ GET_SHFT_SIZE
 PRINT_B_SHIFT
     MOVE.B  #$1,D5 * For EA subroutine's size handling
     LEA     PRNT_B,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     BRA     DO_SHIFT_EA
 PRINT_W_SHIFT
     MOVE.B  #$2,D5 * For EA subroutine's size handling
     LEA     PRNT_W,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     BRA     DO_SHIFT_EA
 PRINT_L_SHIFT
     MOVE.B  #$3,D5 * For EA subroutine's size handling
     LEA     PRNT_L,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     BRA     DO_SHIFT_EA
 
 DO_SHIFT_EA
@@ -1301,25 +1293,22 @@ SHIFT_EA_DONE
 PRINT_B
     MOVE.B  #$1,D5 * For EA subroutine's size handling
     LEA     PRNT_B,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     RTS
 PRINT_W
     MOVE.B  #$2,D5 * For EA subroutine's size handling
     LEA     PRNT_W,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     RTS
 PRINT_L
     MOVE.B  #$3,D5 * For EA subroutine's size handling
     LEA     PRNT_L,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     RTS
 INVALID_OP
-    LEA     INVALID_MSG,A1
-    MOVE.B  #14,D0
-    TRAP    #15
+    * LEA     INVALID_MSG,A1
+    * JSR		PRINT_BUFF
+    MOVE.B  #1,D7
     RTS
 *-----------HANDLE BIT SHIFTING EA SOURCE -------------------------
 REGSHIFTFORMAT_EA
@@ -1345,15 +1334,13 @@ REGSHIFTFORMAT_EA
     
 S_IMM
     LEA     PRNT_Q,A1 * To print hash for immediate data.
-    MOVE.B  #14,D0
-    TRAP    #15
+    JSR		PRINT_BUFF
     
     CMP.B   #0,D6 * Test to see if D6 is equal to zero.
     BEQ     S_EIGHT * Convert value to 8.
     
     MOVE.B  D6,D1 * Print the value.
-    MOVE.B  #3,D0
-    TRAP    #15
+    JSR     PRINT_HEXBUFF
     
     RTS
 
@@ -1361,8 +1348,7 @@ S_EIGHT
     MOVE.B  #8,D6
     
     MOVE.B  D6,D1 * Print the value.
-    MOVE.B  #3,D0
-    TRAP    #15
+    JSR     PRINT_HEXBUFF
 
     RTS
     
@@ -1380,6 +1366,9 @@ ADDFORMAT_DATA_DEST_EA
     MOVE.B  D4,D6   * Prime D6 register
     
     MOVEM.L D0-D7,-(SP) * Move register contents to stack
+
+    LEA     COMMA,A1
+    JSR     PRINT_BUFF
     
     JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
     
@@ -1405,6 +1394,9 @@ ADDFORMAT_EA_DEST_EA
     MOVEM.L (SP)+,D0-D7
     
     MOVE.W  D3,D4  * Refresh opcode
+
+    LEA     COMMA,A1
+    JSR     PRINT_BUFF
     
     JSR     EA_SRC * Handle destination EA
 
@@ -1486,32 +1478,27 @@ MODE_P      CMP.B   #%00000000,D3   * TEST FOR 000: Dn
             
             
 DN_MODE     LEA     PRNT_D,A1
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     REG_P
             
 AN_MODE     LEA     PRNT_A,A1
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     REG_P
 
 ANIND_MODE  LEA     PRNT_AI,A1
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     REG_P
 
 ANINC_MODE  LEA     PRNT_AI,A1  * As of now this is the same as indirect, postdec added after register
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     REG_P
 
 ANDEC_MODE  LEA     PRNT_DC,A1
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     REG_P
             
@@ -1530,8 +1517,7 @@ ABSDAT_MODE CMP.B   #%00000100,D4 * TEST FOR 100: #<data>
             
             * 3: Process the REGISTER BITS: (IN D4)
 REG_P       MOVE.L  D4,D1   * Load the register value into D1 for display.
-            MOVE.B  #3,D0
-            TRAP    #15
+            JSR     PRINT_HEXBUFF
             
             CMP.B   #%00000010,D3
             BEQ     END_ONE
@@ -1545,22 +1531,19 @@ REG_P       MOVE.L  D4,D1   * Load the register value into D1 for display.
             BRA     FINISH  * Additional char after register unnecessary, branch to finish
             
 END_ONE     LEA     PRNT_CL,A1
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     FINISH
 
 END_TWO     LEA     PRNT_IN,A1
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     FINISH
 
 * #<DATA>; RELIES ON D5 CONTAINING SIZE VALUE OF THE INSTRUCTION! (So we know how much data to grab, then what to increment A5 by! (word or long))
     * If this contains 0, this will not work in this state. D5 MUST have val 1-3 at this point!
 DATA_MODE   LEA     PRNT_DT,A1 * Print '#$'
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             CMP.B   #1,D5
             BEQ     BYTE
@@ -1573,48 +1556,45 @@ DATA_MODE   LEA     PRNT_DT,A1 * Print '#$'
             
 * (xxx).W;            
 ABSW_MODE   LEA     PRNT_HX,A1 * Print '$'
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     WORD
             
 * (xxx).L; Assembler uses this when it sign extends automatically over (xxx).W           
 ABSL_MODE   LEA     PRNT_HX,A1 * Print '$'
-            MOVE.B  #14,D0
-            TRAP    #15
+            JSR		PRINT_BUFF
             
             BRA     LONG
 
 * Expects format created by assembled machine code, NOT how it is just pushed to memory by (An)!            
 BYTE        MOVE.W  (A3)+,D1    * Move word of data from curr opcode word pointer to D1, then increment pointer a word.
-            MOVE.B  #16,D2      * Prepare to display a hex value
-            
+            *=MOVE.B  #16,D2      * Prepare to display a hex value
             AND.W   #%0000000011111111,D1   * Discard potential word part from byte
-            MOVE.B  #15,D0      * Set the task to 15
-            TRAP    #15         * Print the value.
+            *=MOVE.B  #15,D0      * Set the task to 15
+            *=TRAP    #15         * Print the value.
+            JSR     PRINT_HEXBUFF
 
             BRA     FINISH
 
 WORD        MOVE.W  (A3)+,D1    * Move word of data from curr opcode word pointer to D1, then increment pointer a word.
-            MOVE.B  #16,D2      * Prepare to display a hex value
-            
-            MOVE.B  #15,D0      * Set the task to 15
-            TRAP    #15         * Print the value.
+            *=MOVE.B  #16,D2      * Prepare to display a hex value
+            *=MOVE.B  #15,D0      * Set the task to 15
+            *=TRAP    #15         * Print the value.
+            JSR     PRINT_HEXBUFF
 
             BRA     FINISH
 
 LONG        MOVE.L  (A3)+,D1    * Move longword of data from curr opcode word pointer to D1, then increment pointer a longword.
-            MOVE.B  #16,D2      * Prepare to display a hex value
-            
-            MOVE.B  #15,D0      * Set the task to 15
-            TRAP    #15         * Print the value.
-            
+            *=MOVE.B  #16,D2      * Prepare to display a hex value
+            *=MOVE.B  #15,D0      * Set the task to 15
+            *=TRAP    #15         * Print the value.
+            JSR     PRINT_HEXBUFF
+
             BRA     FINISH
       
             * 4: UNSUPPORTED BRANCH:
-UNSUPP_MODE LEA     PRNT_ER,A1
-            MOVE.B  #14,D0
-            TRAP    #15 * Continue directly onto finishing up from here
+UNSUPP_MODE *LEA     PRNT_ER,A1
+            *JSR		PRINT_BUFF * Continue directly onto finishing up from here
             
             MOVE.B  #1,D7   * Set Good/Bad flag to Bad state (0 bit)
             
@@ -1628,7 +1608,48 @@ FINISH
             
             RTS
 
+PRINT_BUFF
+            CMP.B #0,(A1)
+            BEQ RET_PBUFF           * Done copying? Jump back
 
+            MOVE.B (A1)+,(A6)+      * Copy character to print buffer
+            BRA PRINT_BUFF          * Repeat
+
+PRINT_HEXBUFF
+            MOVE.B #0,D2
+            CMP.L #0,D1
+            BNE PRINT_HEXBUFF_LP
+            MOVE.B #$30,(A6)+       * Value was 0, print 0
+
+PRINT_HEXBUFF_LP
+            CMP.L #0,D1
+            BEQ RET_PBUFF
+            
+            ROL.L #4,D1             *Rotate 1 nibble to the left
+            MOVE.L D1,D0    
+            AND.L #$F,D0            *Isolate the hex value
+            
+            ADD.B #$37,D0
+            CMP.B #$40,D0
+            BGT   PRINT_HEXBUFF_SKIP
+            SUB.B #$7,D0
+    
+PRINT_HEXBUFF_SKIP
+            CMP.B #$30,D0           * Going to print a zero
+            BNE PRINT_HEXBUFF_YESZERO
+
+            CMP.B #0,D2             * Actually, don't
+            BEQ PRINT_HEXBUFF_NOZERO
+
+PRINT_HEXBUFF_YESZERO
+            MOVE.B D0,(A6)+
+            MOVE.B #1,D2
+
+PRINT_HEXBUFF_NOZERO
+            AND.B #$F0,D1   Clear last nibble
+            BRA PRINT_HEXBUFF_LP
+
+RET_PBUFF   RTS
 * Put variables and constants here
 PROMPT_START DC.B 'Please enter starting address in hexadecimal: ' ,0
 PROMPT_END DC.B 'Please enter ending address in hexadecimal (must be after starting): ' ,0
@@ -1638,7 +1659,7 @@ ENTER_MESSAGE DC.W 'Please press enter to display new screen ' ,CR,LF,0
 INVALID_ORDER DC.W 'Error: ending address must come after starting',CR,LF,0
 ASK_REPEAT DC.W 'Disassemble another mem range? (Yes = 0, No = 1) ' ,0 
 INVALID_MEM_ADDR DS.W 1
-DATA DC.W ' DATA ',CR,LF,0
+DATA DC.W 'DATA ',CR,LF,0
 INVALID_HEX_VAL DS.W 1 
 LINE_BREAK DC.B ' ',CR,LF,0
 SPACE DC.W ' ',0
@@ -1712,8 +1733,7 @@ PRNT_ER DC.B    'ERROR: Unsupported EA Mode',0
 
 DONE
     LEA DONE_MESSAGE, A1
-    MOVE.B #14,D0 
-    TRAP #15
+    JSR		PRINT_BUFF
     END    START        ; last line of source
 
 
@@ -1721,3 +1741,4 @@ DONE
 *~Font size~10~
 *~Tab type~1~
 *~Tab size~4~
+
