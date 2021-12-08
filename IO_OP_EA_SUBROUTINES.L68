@@ -1,6 +1,6 @@
 00001000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 12/7/2021 22:47:25
+Created On: 12/7/2021 23:31:50
 
 00000000                             1  *-----------------------------------------------------------
 00000000  =0000000D                  2  CR EQU $0D
@@ -25,7 +25,7 @@ Created On: 12/7/2021 22:47:25
 00001000                            21  
 00001000                            22  * --Prompt user for starting address--
 00001000                            23  PROMPT_FOR_START
-00001000  43F9 00001E86             24      LEA PROMPT_START,A1 
+00001000  43F9 00001EB8             24      LEA PROMPT_START,A1 
 00001006  103C 000E                 25      MOVE.B #14,D0 
 0000100A  4E4F                      26      TRAP #15 
 0000100C  227C 00000000             27      MOVEA.L #0,A1
@@ -37,7 +37,7 @@ Created On: 12/7/2021 22:47:25
 0000101C                            33  
 0000101C                            34  * --Prompt user for ending address--
 0000101C                            35  PROMPT_FOR_END
-0000101C  43F9 00001EB5             36      LEA PROMPT_END,A1 
+0000101C  43F9 00001EE7             36      LEA PROMPT_END,A1 
 00001022  103C 000E                 37      MOVE.B #14,D0 
 00001026  4E4F                      38      TRAP #15 
 00001028  227C 00000000             39      MOVEA.L #0,A1
@@ -67,11 +67,11 @@ Created On: 12/7/2021 22:47:25
 0000105E                            63  
 0000105E                            64  * --Display invalid hex error upon invalid input--
 0000105E                            65  DISPLAY_INVALID_HEX
-0000105E  43F9 00001EFC             66      LEA INVALID_HEX,A1
+0000105E  43F9 00001F2E             66      LEA INVALID_HEX,A1
 00001064  103C 000E                 67      MOVE.B #14,D0 
 00001068  4E4F                      68      TRAP #15 
 0000106A                            69      
-0000106A  43F9 00001FF2             70      LEA LINE_BREAK,A1
+0000106A  43F9 00002024             70      LEA LINE_BREAK,A1
 00001070  103C 000E                 71      MOVE.B #14,D0 
 00001074  4E4F                      72      TRAP #15 
 00001076  4243                      73      CLR D3
@@ -121,11 +121,11 @@ Created On: 12/7/2021 22:47:25
 000010C0                           117      *-- derive opcodes starting from start address --*
 000010C0                           118      
 000010C0                           119  DISPLAY_INVALID_ORDER
-000010C0  43F9 00001F7A            120      LEA INVALID_ORDER, A1
+000010C0  43F9 00001FAC            120      LEA INVALID_ORDER, A1
 000010C6  103C 000E                121      MOVE.B #14,D0 
 000010CA  4E4F                     122      TRAP #15 
 000010CC                           123      
-000010CC  43F9 00001FF2            124      LEA LINE_BREAK,A1
+000010CC  43F9 00002024            124      LEA LINE_BREAK,A1
 000010D2  103C 000E                125      MOVE.B #14,D0 
 000010D6  4E4F                     126      TRAP #15 
 000010D8  4243                     127      CLR D3
@@ -147,7 +147,7 @@ Created On: 12/7/2021 22:47:25
 000010F6  103C 000F                143      MOVE.B #15,D0 
 000010FA  4E4F                     144      TRAP #15 
 000010FC                           145      
-000010FC  43F9 00001FF6            146      LEA SPACE, A1
+000010FC  43F9 00002028            146      LEA SPACE, A1
 00001102  103C 000E                147      MOVE.B #14,D0 
 00001106  4E4F                     148      TRAP #15 
 00001108                           149          
@@ -173,11 +173,11 @@ Created On: 12/7/2021 22:47:25
 00001138  4E4F                     169      TRAP #15            * Print print buffer
 0000113A                           170      
 0000113A                           171      * Need space after print buffer? **********************************************
-0000113A  43F9 00001FF6            172      LEA SPACE, A1
+0000113A  43F9 00002028            172      LEA SPACE, A1
 00001140  103C 000E                173      MOVE.B #14,D0 
 00001144  4E4F                     174      TRAP #15 
 00001146                           175      
-00001146  43F9 00001FF2            176      LEA LINE_BREAK,A1
+00001146  43F9 00002024            176      LEA LINE_BREAK,A1
 0000114C  103C 000E                177      MOVE.B #14,D0 
 00001150  4E4F                     178      TRAP #15
 00001152                           179      
@@ -186,7 +186,7 @@ Created On: 12/7/2021 22:47:25
 00001154                           182  *Display XXXXXXXX DATA YYYY if memory cannot be decoded to legitimate instruction   
 00001154                           183  DISPLAY_INVALID_INSTRUCTION 
 00001154                           184  
-00001154  43F9 00001FE4            185      LEA DATA, A1
+00001154  43F9 00002016            185      LEA DATA, A1
 0000115A  103C 000E                186      MOVE.B #14,D0 
 0000115E  4E4F                     187      TRAP #15 
 00001160                           188  
@@ -200,7 +200,7 @@ Created On: 12/7/2021 22:47:25
 0000116A  103C 000F                196      MOVE.B #15, D0
 0000116E  4E4F                     197      TRAP #15            * Print print buffer
 00001170                           198      
-00001170  43F9 00001FF2            199      LEA LINE_BREAK,A1
+00001170  43F9 00002024            199      LEA LINE_BREAK,A1
 00001176  103C 000E                200      MOVE.B #14,D0 
 0000117A  4E4F                     201      TRAP #15
 0000117C                           202  
@@ -211,18 +211,18 @@ Created On: 12/7/2021 22:47:25
 00001180  5244                     207      ADD      #1,D4                   
 00001182  B87C 001A                208      CMP      #26,D4 check if output reaches 25 lines                                                                                                
 00001186  6700 0010                209      BEQ      PROMPT_USER_FOR_ENTER
-0000118A  43F9 00001FF6            210      LEA      SPACE,A1           
+0000118A  43F9 00002028            210      LEA      SPACE,A1           
 00001190  303C 000E                211      MOVE     #14,D0                 
 00001194  4E4F                     212      TRAP     #15                        
 00001196  4E75                     213      RTS 
 00001198                           214      
 00001198                           215  *--Prompt user to press enter when display reaches line limit    
 00001198                           216  PROMPT_USER_FOR_ENTER
-00001198  43F9 00001FF6            217      LEA    SPACE,A1 
+00001198  43F9 00002028            217      LEA    SPACE,A1 
 0000119E  103C 000D                218      MOVE.B #13,D0   
 000011A2  4E4F                     219      TRAP   #15
 000011A4                           220  
-000011A4  43F9 00001F4A            221      LEA ENTER_MESSAGE, A1 *Prompt user to press enter to display new screen
+000011A4  43F9 00001F7C            221      LEA ENTER_MESSAGE, A1 *Prompt user to press enter to display new screen
 000011AA  103C 000E                222      MOVE.B #14, D0
 000011AE  4E4F                     223      TRAP #15
 000011B0                           224      
@@ -233,11 +233,11 @@ Created On: 12/7/2021 22:47:25
 000011BA                           229  
 000011BA                           230  *--Ask if user wants to disassemble more memory--*
 000011BA                           231  REACHED_END
-000011BA  43F9 00001FF6            232      LEA SPACE, A1
+000011BA  43F9 00002028            232      LEA SPACE, A1
 000011C0  103C 000E                233      MOVE.B #14,D0 
 000011C4  4E4F                     234      TRAP #15 
 000011C6                           235      
-000011C6  43F9 00001FAE            236      LEA ASK_REPEAT,A1 
+000011C6  43F9 00001FE0            236      LEA ASK_REPEAT,A1 
 000011CC  103C 000E                237      MOVE.B #14,D0 
 000011D0  4E4F                     238      TRAP #15 
 000011D2                           239      
@@ -248,7 +248,7 @@ Created On: 12/7/2021 22:47:25
 000011DC  6700 000A                244      BEQ CLEAR_REG
 000011E0                           245      
 000011E0  0C01 0001                246      CMPI.B #1,D1 1 = no
-000011E4  6700 0F3A                247      BEQ DONE
+000011E4  6700 0F6C                247      BEQ DONE
 000011E8                           248      
 000011E8                           249  *--Clear all registers for reprocessing--*
 000011E8                           250  CLEAR_REG 
@@ -275,16 +275,16 @@ Created On: 12/7/2021 22:47:25
 00001220  B644                     271      CMP.W   D4,D3
 00001222  6600 0010                272      BNE     RTS
 00001226                           273      *Print instruction to output
-00001226  43F9 00002082            274      LEA     PRNT_NOP,A1
-0000122C  4EB9 00001E28            275      JSR PRINT_BUFF
+00001226  43F9 000020B4            274      LEA     PRNT_NOP,A1
+0000122C  4EB9 00001E5A            275      JSR PRINT_BUFF
 00001232  4E75                     276      RTS *Return to I/O subroutine to find next instruction
 00001234                           277  RTS
 00001234  383C 4E75                278      MOVE.W  #$4E75,D4
 00001238  B644                     279      CMP.W   D4,D3
 0000123A  6600 0010                280      BNE     FIND_OP
 0000123E                           281      *Print instruction
-0000123E  43F9 00002086            282      LEA     PRNT_RTS,A1
-00001244  4EB9 00001E28            283      JSR PRINT_BUFF
+0000123E  43F9 000020B8            282      LEA     PRNT_RTS,A1
+00001244  4EB9 00001E5A            283      JSR PRINT_BUFF
 0000124A  4E75                     284      RTS
 0000124C                           285  
 0000124C                           286  FIND_OP *determine op code based on first 2 bits
@@ -314,15 +314,15 @@ Created On: 12/7/2021 22:47:25
 00001282  6700 0012                310      BEQ     IS_MOVEA
 00001286                           311  IS_MOVE
 00001286                           312      *Print MOVE
-00001286  43F9 0000208A            313      LEA     PRNT_MOVE,A1
-0000128C  4EB9 00001E28            314      JSR PRINT_BUFF
+00001286  43F9 000020BC            313      LEA     PRNT_MOVE,A1
+0000128C  4EB9 00001E5A            314      JSR PRINT_BUFF
 00001292                           315  
 00001292  6000 000E                316      BRA     MOVE_SIZE
 00001296                           317  
 00001296                           318  IS_MOVEA
 00001296                           319      *Print MOVEA
-00001296  43F9 0000208F            320      LEA     PRNT_MOVEA,A1
-0000129C  4EB9 00001E28            321      JSR PRINT_BUFF
+00001296  43F9 000020C1            320      LEA     PRNT_MOVEA,A1
+0000129C  4EB9 00001E5A            321      JSR PRINT_BUFF
 000012A2                           322  MOVE_SIZE
 000012A2  3803                     323      MOVE.W  D3,D4
 000012A4  1C3C 000E                324      MOVE.B  #14,D6
@@ -342,31 +342,31 @@ Created On: 12/7/2021 22:47:25
 000012C8                           338      *Print .B (byte)
 000012C8  4EB9 00001B98            339      JSR PRINT_B
 000012CE                           340      *Proceed to EA Subroutine
-000012CE  4EB9 00001C84            341      JSR EA_SRC
-000012D4  43F9 00001FFA            342      LEA COMMA,A1
-000012DA  4EB9 00001E28            343      JSR PRINT_BUFF
+000012CE  4EB9 00001CB6            341      JSR EA_SRC
+000012D4  43F9 0000202C            342      LEA COMMA,A1
+000012DA  4EB9 00001E5A            343      JSR PRINT_BUFF
 000012E0                           344  
-000012E0  4EB9 00001C9C            345      JSR EA_DEST
+000012E0  4EB9 00001CCE            345      JSR EA_DEST
 000012E6                           346      
 000012E6  4E75                     347      RTS * Done printing move
 000012E8                           348  MOVE_W    
 000012E8                           349      *Print .W (word)
 000012E8  4EB9 00001BAA            350      JSR PRINT_W
 000012EE                           351      *Proceed to EA Subroutine
-000012EE  4EB9 00001C84            352      JSR EA_SRC 
-000012F4  43F9 00001FFA            353      LEA COMMA,A1
-000012FA  4EB9 00001E28            354      JSR PRINT_BUFF
-00001300  4EB9 00001C9C            355      JSR EA_DEST
+000012EE  4EB9 00001CB6            352      JSR EA_SRC 
+000012F4  43F9 0000202C            353      LEA COMMA,A1
+000012FA  4EB9 00001E5A            354      JSR PRINT_BUFF
+00001300  4EB9 00001CCE            355      JSR EA_DEST
 00001306                           356  
 00001306  4E75                     357      RTS
 00001308                           358  MOVE_L
 00001308                           359      *Print .L (long)
 00001308  4EB9 00001BBC            360      JSR PRINT_L
 0000130E                           361      *Proceed to EA Subroutine
-0000130E  4EB9 00001C84            362      JSR EA_SRC
-00001314  43F9 00001FFA            363      LEA COMMA,A1
-0000131A  4EB9 00001E28            364      JSR PRINT_BUFF
-00001320  4EB9 00001C9C            365      JSR EA_DEST
+0000130E  4EB9 00001CB6            362      JSR EA_SRC
+00001314  43F9 0000202C            363      LEA COMMA,A1
+0000131A  4EB9 00001E5A            364      JSR PRINT_BUFF
+00001320  4EB9 00001CCE            365      JSR EA_DEST
 00001326                           366  
 00001326  4E75                     367      RTS
 00001328                           368  
@@ -394,21 +394,21 @@ Created On: 12/7/2021 22:47:25
 0000135E  6600 086E                390      BNE     INVALID_OP
 00001362                           391  
 00001362                           392      *Print MOVEQ
-00001362  43F9 0000209B            393      LEA     PRNT_MOVEQ,A1
-00001368  4EB9 00001E28            394      JSR PRINT_BUFF
+00001362  43F9 000020CD            393      LEA     PRNT_MOVEQ,A1
+00001368  4EB9 00001E5A            394      JSR PRINT_BUFF
 0000136E                           395      
 0000136E  2803                     396      MOVE.L  D3,D4
 00001370  E14C                     397      LSL.W   #8,D4
 00001372  E04C                     398      LSR.W   #8,D4
 00001374                           399      *Print data
 00001374                           400      
-00001374                           401      ** Print # in front
+00001374                           401      ** NOW PRINTS #$ in front
 00001374                           402      
-00001374  43F9 000020FE            403      LEA     PRNT_Q,A1
-0000137A  4EB9 00001E28            404      JSR PRINT_BUFF
+00001374  43F9 00002132            403      LEA     PRNT_DT,A1
+0000137A  4EB9 00001E5A            404      JSR PRINT_BUFF
 00001380                           405      
 00001380  2204                     406      MOVE.L  D4,D1
-00001382  4EB9 00001E34            407      JSR     PRINT_HEXBUFF
+00001382  4EB9 00001E66            407      JSR     PRINT_HEXBUFF
 00001388                           408      
 00001388                           409      *** Move reg. bits into a bitfield for EA
 00001388  3803                     410      MOVE.W  D3,D4
@@ -419,7 +419,7 @@ Created On: 12/7/2021 22:47:25
 00001394                           415      
 00001394  48E7 FF00                416      MOVEM.L D0-D7,-(SP)
 00001398                           417      
-00001398  4EB9 00001CC8            418      JSR     EA_SUB
+00001398  4EB9 00001CFA            418      JSR     EA_SUB
 0000139E                           419      
 0000139E  4CDF 00FF                420      MOVEM.L (SP)+,D0-D7
 000013A2                           421     
@@ -451,12 +451,12 @@ Created On: 12/7/2021 22:47:25
 000013CA                           447      
 000013CA                           448      
 000013CA                           449  IS_LEA
-000013CA  43F9 000020BC            450      LEA     PRNT_LEA,A1
-000013D0  4EB9 00001E28            451      JSR     PRINT_BUFF
+000013CA  43F9 000020EE            450      LEA     PRNT_LEA,A1
+000013D0  4EB9 00001E5A            451      JSR     PRINT_BUFF
 000013D6                           452      * HANDLE OPERANDS
 000013D6  1A3C 0003                453      MOVE.B  #3,D5 * Size operation is always longword for LEA, so set here.
 000013DA                           454      
-000013DA  4EB9 00001C84            455      JSR EA_SRC * Handle the source EA
+000013DA  4EB9 00001CB6            455      JSR EA_SRC * Handle the source EA
 000013E0                           456      
 000013E0  2803                     457      MOVE.L  D3,D4 **** CHANGED TO LONGWORD TO POTENTIALLY DEAL WITH BAD DATA AT FRONT WORD. *******************
 000013E2  C87C 0E00                458      AND.W   #%0000111000000000,D4 * Isolate Register #
@@ -467,10 +467,10 @@ Created On: 12/7/2021 22:47:25
 000013F0                           463      
 000013F0  48E7 FF00                464      MOVEM.L D0-D7,-(SP) * Move register contents to stack (NOT SAVING D7 ANYMORE*******************)
 000013F4                           465      
-000013F4  43F9 00001FFA            466      LEA COMMA,A1
-000013FA  4EB9 00001E28            467      JSR PRINT_BUFF
+000013F4  43F9 0000202C            466      LEA COMMA,A1
+000013FA  4EB9 00001E5A            467      JSR PRINT_BUFF
 00001400                           468  
-00001400  4EB9 00001CC8            469      JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
+00001400  4EB9 00001CFA            469      JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
 00001406                           470      
 00001406                           471      * MOVEM RETURN (NOT SAVING D7 ANYMORE*******************)
 00001406  4CDF 00FF                472      MOVEM.L (SP)+,D0-D7
@@ -485,8 +485,8 @@ Created On: 12/7/2021 22:47:25
 00001410  B87C 0046                481      CMP.W   #%01000110,D4
 00001414  6600 07B8                482      BNE     INVALID_OP
 00001418                           483      
-00001418  43F9 000020B5            484      LEA     PRNT_NOT,A1
-0000141E  4EB9 00001E28            485      JSR PRINT_BUFF
+00001418  43F9 000020E7            484      LEA     PRNT_NOT,A1
+0000141E  4EB9 00001E5A            485      JSR PRINT_BUFF
 00001424                           486      
 00001424  2803                     487      MOVE.L  D3,D4
 00001426  E14C                     488      LSL.W   #8,D4
@@ -514,7 +514,7 @@ Created On: 12/7/2021 22:47:25
 00001464                           510      
 00001464                           511  NOT_EA * DEALING W/ NOT EA HERE (May need to save registers...) *************
 00001464                           512      
-00001464  4EB9 00001C84            513      JSR EA_SRC
+00001464  4EB9 00001CB6            513      JSR EA_SRC
 0000146A  4E75                     514      RTS *** Return to IO ***
 0000146C                           515      
 0000146C                           516      
@@ -523,9 +523,9 @@ Created On: 12/7/2021 22:47:25
 0000146E  EC4C                     519      LSR.W   #6,D4
 00001470  B87C 013A                520      CMP.W   #%0100111010,D4 *Check if JSR
 00001474  6600 0016                521      BNE     IS_MOVEM
-00001478  43F9 000020A1            522      LEA     PRNT_JSR,A1
-0000147E  4EB9 00001E28            523      JSR     PRINT_BUFF
-00001484  4EB9 00001C84            524      JSR     EA_SRC
+00001478  43F9 000020D3            522      LEA     PRNT_JSR,A1
+0000147E  4EB9 00001E5A            523      JSR     PRINT_BUFF
+00001484  4EB9 00001CB6            524      JSR     EA_SRC
 0000148A  4E75                     525      RTS     *Proceed to EA Subroutine    
 0000148C                           526  IS_MOVEM
 0000148C                           527      *Check bits 9,8,7 to validate   
@@ -536,8 +536,8 @@ Created On: 12/7/2021 22:47:25
 00001496  B83C 0001                532      CMP.B   #%001,D4
 0000149A  6600 0732                533      BNE     INVALID_OP
 0000149E                           534      
-0000149E  43F9 00002095            535      LEA     PRNT_MOVEM,A1
-000014A4  4EB9 00001E28            536      JSR PRINT_BUFF
+0000149E  43F9 000020C7            535      LEA     PRNT_MOVEM,A1
+000014A4  4EB9 00001E5A            536      JSR PRINT_BUFF
 000014AA                           537      
 000014AA  2803                     538      MOVE.L  D3,D4
 000014AC  1C3C 0009                539      MOVE.B  #9,D6
@@ -566,8 +566,8 @@ Created On: 12/7/2021 22:47:25
 000014E6  6600 06E6                562      BNE     INVALID_OP
 000014EA                           563  
 000014EA                           564      *Print ADDQ
-000014EA  43F9 000020C0            565      LEA     PRNT_ADDQ,A1
-000014F0  4EB9 00001E28            566      JSR     PRINT_BUFF
+000014EA  43F9 000020F2            565      LEA     PRNT_ADDQ,A1
+000014F0  4EB9 00001E5A            566      JSR     PRINT_BUFF
 000014F6                           567      
 000014F6  2803                     568      MOVE.L  D3,D4
 000014F8  E14C                     569      LSL.W   #8,D4   *Remove first 8 bits
@@ -602,14 +602,14 @@ Created On: 12/7/2021 22:47:25
 0000153E  EC6C                     598      LSR.W   D6,D4
 00001540                           599      
 00001540                           600      *Print data
-00001540  43F9 000020FE            601      LEA     PRNT_Q,A1
-00001546  4EB9 00001E28            602      JSR     PRINT_BUFF
+00001540  43F9 00002130            601      LEA     PRNT_Q,A1
+00001546  4EB9 00001E5A            602      JSR     PRINT_BUFF
 0000154C                           603      
 0000154C  3204                     604      MOVE.W  D4,D1
-0000154E  4EB9 00001E34            605      JSR     PRINT_HEXBUFF
+0000154E  4EB9 00001E66            605      JSR     PRINT_HEXBUFF
 00001554                           606      
 00001554                           607      * Handle EA
-00001554  4EB9 00001C84            608      JSR     EA_SRC
+00001554  4EB9 00001CB6            608      JSR     EA_SRC
 0000155A                           609      
 0000155A  4E75                     610      RTS * Return to IO
 0000155C                           611      
@@ -634,24 +634,24 @@ Created On: 12/7/2021 22:47:25
 00001586                           630      
 00001586  6000 0646                631      BRA     INVALID_OP
 0000158A                           632  IS_BRA
-0000158A  43F9 000020B1            633      LEA     PRNT_BRA,A1
-00001590  4EB9 00001E28            634      JSR     PRINT_BUFF
+0000158A  43F9 000020E3            633      LEA     PRNT_BRA,A1
+00001590  4EB9 00001E5A            634      JSR     PRINT_BUFF
 00001596  4EB9 000015DA            635      JSR DISP
 0000159C  4E75                     636      RTS
 0000159E                           637      
 0000159E                           638  IS_BGT
-0000159E  43F9 000020A5            639      LEA     PRNT_BGT,A1
-000015A4  4EB9 00001E28            640      JSR     PRINT_BUFF
+0000159E  43F9 000020D7            639      LEA     PRNT_BGT,A1
+000015A4  4EB9 00001E5A            640      JSR     PRINT_BUFF
 000015AA  4EB9 000015DA            641      JSR DISP
 000015B0  4E75                     642      RTS
 000015B2                           643  IS_BLE
-000015B2  43F9 000020A9            644      LEA     PRNT_BLE,A1
-000015B8  4EB9 00001E28            645      JSR     PRINT_BUFF
+000015B2  43F9 000020DB            644      LEA     PRNT_BLE,A1
+000015B8  4EB9 00001E5A            645      JSR     PRINT_BUFF
 000015BE  4EB9 000015DA            646      JSR DISP
 000015C4  4E75                     647      RTS
 000015C6                           648  IS_BEQ  
-000015C6  43F9 000020AD            649      LEA     PRNT_BEQ,A1
-000015CC  4EB9 00001E28            650      JSR     PRINT_BUFF
+000015C6  43F9 000020DF            649      LEA     PRNT_BEQ,A1
+000015CC  4EB9 00001E5A            650      JSR     PRINT_BUFF
 000015D2  4EB9 000015DA            651      JSR DISP
 000015D8  4E75                     652      RTS  
 000015DA                           653  *------------SIZE AFFECT DISP VALUE?---------------
@@ -676,7 +676,7 @@ Created On: 12/7/2021 22:47:25
 00001600                           672      *=MOVE.B  #16,D2
 00001600                           673      *=MOVE.B  #15,D0
 00001600                           674      *TRAP    #15
-00001600  4EB9 00001E34            675      JSR     PRINT_HEXBUFF
+00001600  4EB9 00001E66            675      JSR     PRINT_HEXBUFF
 00001606  4E75                     676      RTS    
 00001608                           677  DISP_16
 00001608  381B                     678      MOVE.W  (A3)+,D4
@@ -690,7 +690,7 @@ Created On: 12/7/2021 22:47:25
 00001616                           686      *=MOVE.B  #16,D2
 00001616                           687      *=MOVE.B  #15,D0
 00001616                           688      *TRAP    #15
-00001616  4EB9 00001E34            689      JSR     PRINT_HEXBUFF
+00001616  4EB9 00001E66            689      JSR     PRINT_HEXBUFF
 0000161C  4E75                     690      RTS
 0000161E                           691  DISP_32    
 0000161E  281B                     692      MOVE.L  (A3)+,D4
@@ -701,7 +701,7 @@ Created On: 12/7/2021 22:47:25
 00001628                           697      
 00001628  9C44                     698      SUB.W   D4,D6
 0000162A  2206                     699      MOVE.L  D6,D1
-0000162C  4EB9 00001E34            700      JSR     PRINT_HEXBUFF
+0000162C  4EB9 00001E66            700      JSR     PRINT_HEXBUFF
 00001632                           701      * MOVE.B  #16,D2
 00001632                           702      * MOVE.B  #15,D0
 00001632                           703      * TRAP    #15
@@ -719,8 +719,8 @@ Created On: 12/7/2021 22:47:25
 0000164E                           715      
 0000164E  6000 057E                716      BRA     INVALID_OP
 00001652                           717  IS_OR
-00001652  43F9 000020B9            718      LEA     PRNT_OR,A1
-00001658  4EB9 00001E28            719      JSR     PRINT_BUFF
+00001652  43F9 000020EB            718      LEA     PRNT_OR,A1
+00001658  4EB9 00001E5A            719      JSR     PRINT_BUFF
 0000165E                           720      
 0000165E  2803                     721      MOVE.L  D3,D4
 00001660  EF4C                     722      LSL.W   #7,D4
@@ -751,20 +751,20 @@ Created On: 12/7/2021 22:47:25
 0000169C                           747  OR_B_D
 0000169C  4EB9 00001B98            748      JSR PRINT_B
 000016A2                           749      *Proceed to EA Subroutine
-000016A2  4EB9 00001C26            750      JSR     ADDFORMAT_DATA_DEST_EA
+000016A2  4EB9 00001C58            750      JSR     ADDFORMAT_DATA_DEST_EA
 000016A8                           751      
 000016A8  4E75                     752      RTS * Return to IO
 000016AA                           753      
 000016AA                           754  OR_W_D
 000016AA  4EB9 00001BAA            755      JSR PRINT_W
 000016B0                           756      *Proceed to EA Subroutine
-000016B0  4EB9 00001C26            757      JSR     ADDFORMAT_DATA_DEST_EA
+000016B0  4EB9 00001C58            757      JSR     ADDFORMAT_DATA_DEST_EA
 000016B6                           758      
 000016B6  4E75                     759      RTS * Return to IO    
 000016B8                           760  OR_L_D
 000016B8  4EB9 00001BBC            761      JSR PRINT_L
 000016BE                           762      *Proceed to EA Subroutine
-000016BE  4EB9 00001C26            763      JSR     ADDFORMAT_DATA_DEST_EA
+000016BE  4EB9 00001C58            763      JSR     ADDFORMAT_DATA_DEST_EA
 000016C4                           764      
 000016C4  4E75                     765      RTS * Return to IO
 000016C6                           766  
@@ -773,24 +773,24 @@ Created On: 12/7/2021 22:47:25
 000016C6                           769  OR_B
 000016C6  4EB9 00001B98            770      JSR PRINT_B
 000016CC                           771      *Proceed to EA Subroutine
-000016CC  4EB9 00001C54            772      JSR     ADDFORMAT_EA_DEST_EA
+000016CC  4EB9 00001C86            772      JSR     ADDFORMAT_EA_DEST_EA
 000016D2  4E75                     773      RTS * Return to IO 
 000016D4                           774      
 000016D4                           775  OR_W
 000016D4  4EB9 00001BAA            776      JSR PRINT_W
 000016DA                           777      *Proceed to EA Subroutine
-000016DA  4EB9 00001C54            778      JSR     ADDFORMAT_EA_DEST_EA
+000016DA  4EB9 00001C86            778      JSR     ADDFORMAT_EA_DEST_EA
 000016E0  4E75                     779      RTS * Return to IO 
 000016E2                           780      
 000016E2                           781  OR_L
 000016E2  4EB9 00001BBC            782      JSR PRINT_L
 000016E8                           783      *Proceed to EA Subroutine
-000016E8  4EB9 00001C54            784      JSR     ADDFORMAT_EA_DEST_EA
+000016E8  4EB9 00001C86            784      JSR     ADDFORMAT_EA_DEST_EA
 000016EE  4E75                     785      RTS * Return to IO 
 000016F0                           786      
 000016F0                           787  IS_SUB
-000016F0  43F9 000020D2            788      LEA     PRNT_SUB,A1
-000016F6  4EB9 00001E28            789      JSR     PRINT_BUFF
+000016F0  43F9 00002104            788      LEA     PRNT_SUB,A1
+000016F6  4EB9 00001E5A            789      JSR     PRINT_BUFF
 000016FC                           790  
 000016FC  2803                     791      MOVE.L  D3,D4
 000016FE  EF4C                     792      LSL.W   #7,D4
@@ -818,19 +818,19 @@ Created On: 12/7/2021 22:47:25
 00001736                           814  SUB_B_D
 00001736  4EB9 00001B98            815      JSR PRINT_B
 0000173C                           816      *Proceed to EA Subroutine
-0000173C  4EB9 00001C26            817      JSR     ADDFORMAT_DATA_DEST_EA
+0000173C  4EB9 00001C58            817      JSR     ADDFORMAT_DATA_DEST_EA
 00001742                           818      
 00001742  4E75                     819      RTS * Return to IO    
 00001744                           820  SUB_W_D
 00001744  4EB9 00001BAA            821      JSR PRINT_W
 0000174A                           822      *Proceed to EA Subroutine
-0000174A  4EB9 00001C26            823      JSR     ADDFORMAT_DATA_DEST_EA
+0000174A  4EB9 00001C58            823      JSR     ADDFORMAT_DATA_DEST_EA
 00001750                           824      
 00001750  4E75                     825      RTS * Return to IO    
 00001752                           826  SUB_L_D
 00001752  4EB9 00001BBC            827      JSR PRINT_L
 00001758                           828      *Proceed to EA Subroutine 
-00001758  4EB9 00001C26            829      JSR     ADDFORMAT_DATA_DEST_EA
+00001758  4EB9 00001C58            829      JSR     ADDFORMAT_DATA_DEST_EA
 0000175E                           830      
 0000175E  4E75                     831      RTS * Return to IO
 00001760                           832  
@@ -839,17 +839,17 @@ Created On: 12/7/2021 22:47:25
 00001760                           835  SUB_B
 00001760  4EB9 00001B98            836      JSR PRINT_B
 00001766                           837      *Proceed to EA Subroutine
-00001766  4EB9 00001C54            838      JSR     ADDFORMAT_EA_DEST_EA
+00001766  4EB9 00001C86            838      JSR     ADDFORMAT_EA_DEST_EA
 0000176C  4E75                     839      RTS * Return to IO     
 0000176E                           840  SUB_W
 0000176E  4EB9 00001BAA            841      JSR PRINT_W
 00001774                           842      *Proceed to EA Subroutine    
-00001774  4EB9 00001C54            843      JSR     ADDFORMAT_EA_DEST_EA
+00001774  4EB9 00001C86            843      JSR     ADDFORMAT_EA_DEST_EA
 0000177A  4E75                     844      RTS * Return to IO 
 0000177C                           845  SUB_L
 0000177C  4EB9 00001BBC            846      JSR PRINT_L
 00001782                           847      *Proceed to EA Subroutine 
-00001782  4EB9 00001C54            848      JSR     ADDFORMAT_EA_DEST_EA
+00001782  4EB9 00001C86            848      JSR     ADDFORMAT_EA_DEST_EA
 00001788  4E75                     849      RTS * Return to IO     
 0000178A                           850  
 0000178A                           851     
@@ -869,8 +869,8 @@ Created On: 12/7/2021 22:47:25
 000017AA                           865      
 000017AA  6000 0422                866      BRA     INVALID_OP
 000017AE                           867  OP_1100 *AND
-000017AE  43F9 000020CE            868      LEA     PRNT_AND,A1
-000017B4  4EB9 00001E28            869      JSR     PRINT_BUFF
+000017AE  43F9 00002100            868      LEA     PRNT_AND,A1
+000017B4  4EB9 00001E5A            869      JSR     PRINT_BUFF
 000017BA                           870  
 000017BA  2803                     871      MOVE.L  D3,D4
 000017BC  EF4C                     872      LSL.W   #7,D4
@@ -897,21 +897,21 @@ Created On: 12/7/2021 22:47:25
 000017F8                           893  AND_B_D
 000017F8  4EB9 00001B98            894      JSR PRINT_B
 000017FE                           895      *Proceed to EA Subroutine
-000017FE  4EB9 00001C26            896      JSR     ADDFORMAT_DATA_DEST_EA
+000017FE  4EB9 00001C58            896      JSR     ADDFORMAT_DATA_DEST_EA
 00001804                           897      
 00001804  4E75                     898      RTS * Return to IO
 00001806                           899      
 00001806                           900  AND_W_D
 00001806  4EB9 00001BAA            901      JSR PRINT_W
 0000180C                           902      *Proceed to EA Subroutine    
-0000180C  4EB9 00001C26            903      JSR     ADDFORMAT_DATA_DEST_EA
+0000180C  4EB9 00001C58            903      JSR     ADDFORMAT_DATA_DEST_EA
 00001812                           904      
 00001812  4E75                     905      RTS * Return to IO
 00001814                           906  
 00001814                           907  AND_L_D  
 00001814  4EB9 00001BBC            908      JSR PRINT_L
 0000181A                           909      *Proceed to EA Subroutine    
-0000181A  4EB9 00001C26            910      JSR     ADDFORMAT_DATA_DEST_EA
+0000181A  4EB9 00001C58            910      JSR     ADDFORMAT_DATA_DEST_EA
 00001820                           911      
 00001820  4E75                     912      RTS * Return to IO
 00001822                           913  
@@ -920,19 +920,19 @@ Created On: 12/7/2021 22:47:25
 00001822                           916  AND_B
 00001822  4EB9 00001B98            917      JSR PRINT_B
 00001828                           918      *Proceed to EA Subroutine
-00001828  4EB9 00001C54            919      JSR     ADDFORMAT_EA_DEST_EA
+00001828  4EB9 00001C86            919      JSR     ADDFORMAT_EA_DEST_EA
 0000182E  4E75                     920      RTS * Return to IO 
 00001830                           921      
 00001830                           922  AND_W
 00001830  4EB9 00001BAA            923      JSR PRINT_W
 00001836                           924      *Proceed to EA Subroutine    
-00001836  4EB9 00001C54            925      JSR     ADDFORMAT_EA_DEST_EA
+00001836  4EB9 00001C86            925      JSR     ADDFORMAT_EA_DEST_EA
 0000183C  4E75                     926      RTS * Return to IO 
 0000183E                           927  
 0000183E                           928  AND_L    
 0000183E  4EB9 00001BBC            929      JSR PRINT_L
 00001844                           930      *Proceed to EA Subroutine  
-00001844  4EB9 00001C54            931      JSR     ADDFORMAT_EA_DEST_EA
+00001844  4EB9 00001C86            931      JSR     ADDFORMAT_EA_DEST_EA
 0000184A  4E75                     932      RTS * Return to IO 
 0000184C                           933  
 0000184C                           934      
@@ -963,7 +963,7 @@ Created On: 12/7/2021 22:47:25
 00001882  6700 008C                959      BEQ     ADD_L
 00001886                           960      
 00001886                           961      
-00001886                           962      *ADDA Opmodes
+00001886                           962      *ADDA Opmodes (ALWAYS has An as the destination, so print <ea> first, then the register)
 00001886  B83C 0003                963      CMP.B   #%011,D4
 0000188A  6700 0096                964      BEQ     ADDA_W
 0000188E  B83C 0007                965      CMP.B   #%111,D4
@@ -973,12 +973,12 @@ Created On: 12/7/2021 22:47:25
 00001896  6000 0336                969      BRA     INVALID_OP
 0000189A                           970  
 0000189A                           971  IS_ADD
-0000189A  43F9 000020C5            972      LEA     PRNT_ADD,A1
-000018A0  4EB9 00001E28            973      JSR     PRINT_BUFF
+0000189A  43F9 000020F7            972      LEA     PRNT_ADD,A1
+000018A0  4EB9 00001E5A            973      JSR     PRINT_BUFF
 000018A6  4E75                     974      RTS
 000018A8                           975  IS_ADDA
-000018A8  43F9 000020C9            976      LEA     PRNT_ADDA,A1
-000018AE  4EB9 00001E28            977      JSR     PRINT_BUFF
+000018A8  43F9 000020FB            976      LEA     PRNT_ADDA,A1
+000018AE  4EB9 00001E5A            977      JSR     PRINT_BUFF
 000018B4  4E75                     978      RTS   
 000018B6                           979  
 000018B6                           980  * For these, handle EA first, then Data reg.
@@ -986,7 +986,7 @@ Created On: 12/7/2021 22:47:25
 000018B6  4EB8 189A                982      JSR     IS_ADD
 000018BA  4EB9 00001B98            983      JSR     PRINT_B
 000018C0                           984      * Handle operands
-000018C0  4EB9 00001C26            985      JSR     ADDFORMAT_DATA_DEST_EA
+000018C0  4EB9 00001C58            985      JSR     ADDFORMAT_DATA_DEST_EA
 000018C6                           986      
 000018C6  4E75                     987      RTS * Return to IO
 000018C8                           988      
@@ -994,14 +994,14 @@ Created On: 12/7/2021 22:47:25
 000018C8  4EB8 189A                990      JSR     IS_ADD
 000018CC  4EB9 00001BAA            991      JSR     PRINT_W
 000018D2                           992      * Handle operands
-000018D2  4EB9 00001C26            993      JSR     ADDFORMAT_DATA_DEST_EA
+000018D2  4EB9 00001C58            993      JSR     ADDFORMAT_DATA_DEST_EA
 000018D8                           994      
 000018D8  4E75                     995      RTS * Return to IO    
 000018DA                           996  ADD_L_D
 000018DA  4EB8 189A                997      JSR     IS_ADD
 000018DE  4EB9 00001BBC            998      JSR     PRINT_L
 000018E4                           999      * Handle operands
-000018E4  4EB9 00001C26           1000      JSR     ADDFORMAT_DATA_DEST_EA
+000018E4  4EB9 00001C58           1000      JSR     ADDFORMAT_DATA_DEST_EA
 000018EA                          1001      
 000018EA  4E75                    1002      RTS * Return to IO
 000018EC                          1003  
@@ -1011,37 +1011,37 @@ Created On: 12/7/2021 22:47:25
 000018EC  4EB8 189A               1007      JSR     IS_ADD
 000018F0  4EB9 00001B98           1008      JSR     PRINT_B
 000018F6                          1009      *Proceed to EA Subroutine
-000018F6  4EB9 00001C54           1010      JSR     ADDFORMAT_EA_DEST_EA
+000018F6  4EB9 00001C86           1010      JSR     ADDFORMAT_EA_DEST_EA
 000018FC  4E75                    1011      RTS * Return to IO 
 000018FE                          1012      
 000018FE                          1013  ADD_W
 000018FE  4EB8 189A               1014      JSR     IS_ADD
 00001902  4EB9 00001BAA           1015      JSR     PRINT_W
 00001908                          1016      *Proceed to EA Subroutine    
-00001908  4EB9 00001C54           1017      JSR     ADDFORMAT_EA_DEST_EA
+00001908  4EB9 00001C86           1017      JSR     ADDFORMAT_EA_DEST_EA
 0000190E  4E75                    1018      RTS * Return to IO 
 00001910                          1019      
 00001910                          1020  ADD_L
 00001910  4EB8 189A               1021      JSR     IS_ADD
 00001914  4EB9 00001BBC           1022      JSR     PRINT_L
 0000191A                          1023      *Proceed to EA Subroutine
-0000191A  4EB9 00001C54           1024      JSR     ADDFORMAT_EA_DEST_EA
+0000191A  4EB9 00001C86           1024      JSR     ADDFORMAT_EA_DEST_EA
 00001920  4E75                    1025      RTS * Return to IO 
 00001922                          1026  
 00001922                          1027  
-00001922                          1028  * Destination must be An, so do data reg first, then EA (POTENTIAL BUG, CHECK ********************)
+00001922                          1028  * Destination must be An, so do EA first, then reg (POTENTIAL BUG, CHECK ********************)
 00001922                          1029  ADDA_W
 00001922  4EB8 18A8               1030      JSR     IS_ADDA
 00001926  4EB9 00001BAA           1031      JSR     PRINT_W
 0000192C                          1032      *Proceed to EA Subroutine
-0000192C  4EB9 00001C54           1033      JSR     ADDFORMAT_EA_DEST_EA
+0000192C  4EB9 00001C26           1033      JSR     ADDAFORMAT_EA
 00001932  4E75                    1034      RTS * Return to IO 
 00001934                          1035      
 00001934                          1036  ADDA_L  
 00001934  4EB8 18A8               1037      JSR     IS_ADDA  
 00001938  4EB9 00001BBC           1038      JSR     PRINT_L
 0000193E                          1039      *Proceed to EA Subroutine
-0000193E  4EB9 00001C54           1040      JSR     ADDFORMAT_EA_DEST_EA
+0000193E  4EB9 00001C26           1040      JSR     ADDAFORMAT_EA
 00001944  4E75                    1041      RTS * Return to IO 
 00001946                          1042  
 00001946                          1043      
@@ -1119,8 +1119,8 @@ Created On: 12/7/2021 22:47:25
 000019EA                          1115      
 000019EA                          1116      
 000019EA                          1117  IS_ASR
-000019EA  43F9 000020DA           1118      LEA     PRNT_ASR,A1
-000019F0  4EB9 00001E28           1119      JSR     PRINT_BUFF
+000019EA  43F9 0000210C           1118      LEA     PRNT_ASR,A1
+000019F0  4EB9 00001E5A           1119      JSR     PRINT_BUFF
 000019F6  BC3C 0001               1120      CMP.B   #01,D6
 000019FA  67CA                    1121      BEQ     A_SIZE
 000019FC                          1122  
@@ -1128,8 +1128,8 @@ Created On: 12/7/2021 22:47:25
 00001A00                          1124  
 00001A00                          1125  
 00001A00                          1126  IS_ASL
-00001A00  43F9 000020D6           1127      LEA     PRNT_ASL,A1
-00001A06  4EB9 00001E28           1128      JSR     PRINT_BUFF
+00001A00  43F9 00002108           1127      LEA     PRNT_ASL,A1
+00001A06  4EB9 00001E5A           1128      JSR     PRINT_BUFF
 00001A0C  BC3C 0001               1129      CMP.B   #01,D6
 00001A10  67B4                    1130      BEQ     A_SIZE
 00001A12                          1131  
@@ -1167,8 +1167,8 @@ Created On: 12/7/2021 22:47:25
 00001A5E                          1163  
 00001A5E                          1164      
 00001A5E                          1165  IS_LSR
-00001A5E  43F9 000020E2           1166      LEA     PRNT_LSR,A1
-00001A64  4EB9 00001E28           1167      JSR     PRINT_BUFF
+00001A5E  43F9 00002114           1166      LEA     PRNT_LSR,A1
+00001A64  4EB9 00001E5A           1167      JSR     PRINT_BUFF
 00001A6A  BC3C 0001               1168      CMP.B   #01,D6
 00001A6E  67CA                    1169      BEQ     L_SIZE
 00001A70                          1170      
@@ -1176,8 +1176,8 @@ Created On: 12/7/2021 22:47:25
 00001A74                          1172      
 00001A74                          1173  
 00001A74                          1174  IS_LSL
-00001A74  43F9 000020DE           1175      LEA     PRNT_LSL,A1
-00001A7A  4EB9 00001E28           1176      JSR     PRINT_BUFF
+00001A74  43F9 00002110           1175      LEA     PRNT_LSL,A1
+00001A7A  4EB9 00001E5A           1176      JSR     PRINT_BUFF
 00001A80  BC3C 0001               1177      CMP.B   #01,D6
 00001A84  67B4                    1178      BEQ     L_SIZE 
 00001A86                          1179      
@@ -1217,8 +1217,8 @@ Created On: 12/7/2021 22:47:25
 00001AD2                          1213      
 00001AD2                          1214      
 00001AD2                          1215  IS_ROR
-00001AD2  43F9 000020EA           1216      LEA     PRNT_ROR,A1
-00001AD8  4EB9 00001E28           1217      JSR     PRINT_BUFF
+00001AD2  43F9 0000211C           1216      LEA     PRNT_ROR,A1
+00001AD8  4EB9 00001E5A           1217      JSR     PRINT_BUFF
 00001ADE  BC3C 0001               1218      CMP.B   #01,D6
 00001AE2  67CA                    1219      BEQ     R_SIZE  
 00001AE4                          1220  
@@ -1226,8 +1226,8 @@ Created On: 12/7/2021 22:47:25
 00001AE8                          1222    
 00001AE8                          1223  
 00001AE8                          1224  IS_ROL
-00001AE8  43F9 000020E6           1225      LEA     PRNT_ROL,A1
-00001AEE  4EB9 00001E28           1226      JSR     PRINT_BUFF
+00001AE8  43F9 00002118           1225      LEA     PRNT_ROL,A1
+00001AEE  4EB9 00001E5A           1226      JSR     PRINT_BUFF
 00001AF4  BC3C 0001               1227      CMP.B   #01,D6
 00001AF8  67B4                    1228      BEQ     R_SIZE 
 00001AFA                          1229  
@@ -1274,18 +1274,18 @@ Created On: 12/7/2021 22:47:25
 00001B2C                          1270      
 00001B2C                          1271  PRINT_B_SHIFT
 00001B2C  1A3C 0001               1272      MOVE.B  #$1,D5 * For EA subroutine's size handling
-00001B30  43F9 00002076           1273      LEA     PRNT_B,A1
-00001B36  4EB9 00001E28           1274      JSR     PRINT_BUFF
+00001B30  43F9 000020A8           1273      LEA     PRNT_B,A1
+00001B36  4EB9 00001E5A           1274      JSR     PRINT_BUFF
 00001B3C  6000 002A               1275      BRA     DO_SHIFT_EA
 00001B40                          1276  PRINT_W_SHIFT
 00001B40  1A3C 0002               1277      MOVE.B  #$2,D5 * For EA subroutine's size handling
-00001B44  43F9 0000207A           1278      LEA     PRNT_W,A1
-00001B4A  4EB9 00001E28           1279      JSR     PRINT_BUFF
+00001B44  43F9 000020AC           1278      LEA     PRNT_W,A1
+00001B4A  4EB9 00001E5A           1279      JSR     PRINT_BUFF
 00001B50  6000 0016               1280      BRA     DO_SHIFT_EA
 00001B54                          1281  PRINT_L_SHIFT
 00001B54  1A3C 0003               1282      MOVE.B  #$3,D5 * For EA subroutine's size handling
-00001B58  43F9 0000207E           1283      LEA     PRNT_L,A1
-00001B5E  4EB9 00001E28           1284      JSR     PRINT_BUFF
+00001B58  43F9 000020B0           1283      LEA     PRNT_L,A1
+00001B5E  4EB9 00001E5A           1284      JSR     PRINT_BUFF
 00001B64  6000 0002               1285      BRA     DO_SHIFT_EA
 00001B68                          1286  
 00001B68                          1287  DO_SHIFT_EA
@@ -1296,7 +1296,7 @@ Created On: 12/7/2021 22:47:25
 00001B68  B43C 0000               1292      CMP.B   #0,D2
 00001B6C  6700 000C               1293      BEQ     REG_EA
 00001B70                          1294  
-00001B70  4EB9 00001C84           1295      JSR     EA_SRC * MEM mode, so just need to print single EA field.
+00001B70  4EB9 00001CB6           1295      JSR     EA_SRC * MEM mode, so just need to print single EA field.
 00001B76  6000 001E               1296      BRA     SHIFT_EA_DONE
 00001B7A                          1297  
 00001B7A                          1298  REG_EA
@@ -1307,7 +1307,7 @@ Created On: 12/7/2021 22:47:25
 00001B86  1C04                    1303      MOVE.B  D4,D6
 00001B88                          1304      
 00001B88  48E7 FF00               1305      MOVEM.L D0-D7,-(SP) * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001B8C  4EB9 00001CC8           1306      JSR     EA_SUB
+00001B8C  4EB9 00001CFA           1306      JSR     EA_SUB
 00001B92  4CDF 00FF               1307      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
 00001B96                          1308  
 00001B96                          1309  SHIFT_EA_DONE
@@ -1315,18 +1315,18 @@ Created On: 12/7/2021 22:47:25
 00001B98                          1311   
 00001B98                          1312  PRINT_B
 00001B98  1A3C 0001               1313      MOVE.B  #$1,D5 * For EA subroutine's size handling
-00001B9C  43F9 00002076           1314      LEA     PRNT_B,A1
-00001BA2  4EB9 00001E28           1315      JSR     PRINT_BUFF
+00001B9C  43F9 000020A8           1314      LEA     PRNT_B,A1
+00001BA2  4EB9 00001E5A           1315      JSR     PRINT_BUFF
 00001BA8  4E75                    1316      RTS
 00001BAA                          1317  PRINT_W
 00001BAA  1A3C 0002               1318      MOVE.B  #$2,D5 * For EA subroutine's size handling
-00001BAE  43F9 0000207A           1319      LEA     PRNT_W,A1
-00001BB4  4EB9 00001E28           1320      JSR     PRINT_BUFF
+00001BAE  43F9 000020AC           1319      LEA     PRNT_W,A1
+00001BB4  4EB9 00001E5A           1320      JSR     PRINT_BUFF
 00001BBA  4E75                    1321      RTS
 00001BBC                          1322  PRINT_L
 00001BBC  1A3C 0003               1323      MOVE.B  #$3,D5 * For EA subroutine's size handling
-00001BC0  43F9 0000207E           1324      LEA     PRNT_L,A1
-00001BC6  4EB9 00001E28           1325      JSR     PRINT_BUFF
+00001BC0  43F9 000020B0           1324      LEA     PRNT_L,A1
+00001BC6  4EB9 00001E5A           1325      JSR     PRINT_BUFF
 00001BCC  4E75                    1326      RTS
 00001BCE                          1327  INVALID_OP
 00001BCE                          1328      * LEA     INVALID_MSG,A1
@@ -1349,7 +1349,7 @@ Created On: 12/7/2021 22:47:25
 00001BEA                          1345      
 00001BEA  48E7 FF00               1346      MOVEM.L D0-D7,-(SP) * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
 00001BEE                          1347      
-00001BEE  4EB9 00001CC8           1348      JSR     EA_SUB * Print the source operand
+00001BEE  4EB9 00001CFA           1348      JSR     EA_SUB * Print the source operand
 00001BF4                          1349      
 00001BF4  4CDF 00FF               1350      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
 00001BF8                          1351  
@@ -1357,14 +1357,14 @@ Created On: 12/7/2021 22:47:25
 00001BF8  4E75                    1353      RTS * Go back to process the destination
 00001BFA                          1354      
 00001BFA                          1355  S_IMM
-00001BFA  43F9 000020FE           1356      LEA     PRNT_Q,A1 * To print hash for immediate data.
-00001C00  4EB9 00001E28           1357      JSR     PRINT_BUFF
+00001BFA  43F9 00002130           1356      LEA     PRNT_Q,A1 * To print hash for immediate data.
+00001C00  4EB9 00001E5A           1357      JSR     PRINT_BUFF
 00001C06                          1358      
 00001C06  BC3C 0000               1359      CMP.B   #0,D6 * Test to see if D6 is equal to zero.
 00001C0A  6700 000C               1360      BEQ     S_EIGHT * Convert value to 8.
 00001C0E                          1361      
 00001C0E  1206                    1362      MOVE.B  D6,D1 * Print the value.
-00001C10  4EB9 00001E34           1363      JSR     PRINT_HEXBUFF
+00001C10  4EB9 00001E66           1363      JSR     PRINT_HEXBUFF
 00001C16                          1364      
 00001C16  4E75                    1365      RTS
 00001C18                          1366  
@@ -1372,402 +1372,429 @@ Created On: 12/7/2021 22:47:25
 00001C18  1C3C 0008               1368      MOVE.B  #8,D6
 00001C1C                          1369      
 00001C1C  1206                    1370      MOVE.B  D6,D1 * Print the value.
-00001C1E  4EB9 00001E34           1371      JSR     PRINT_HEXBUFF
+00001C1E  4EB9 00001E66           1371      JSR     PRINT_HEXBUFF
 00001C24                          1372  
 00001C24  4E75                    1373      RTS
 00001C26                          1374      
 00001C26                          1375  *------------------------------------------------------------
-00001C26                          1376  *-----------HANDLE ADD FORMAT DATA DESTINATION EA -----------
-00001C26                          1377  ADDFORMAT_DATA_DEST_EA
-00001C26  4EB9 00001C84           1378      JSR     EA_SRC * Handle source EA
-00001C2C                          1379      
+00001C26                          1376  *-----------HANDLE ADDA FORMAT EA ---------------------------
+00001C26                          1377  ADDAFORMAT_EA
+00001C26                          1378      
+00001C26  4EB9 00001CB6           1379      JSR     EA_SRC * Handle source EA
 00001C2C                          1380      
-00001C2C                          1381      
-00001C2C  3803                    1382      MOVE.W  D3,D4
-00001C2E  C87C 0E00               1383      AND.W   #%0000111000000000,D4 * Isolate Register #
-00001C32  E64C                    1384      LSR.W   #3,D4
-00001C34  EC4C                    1385      LSR.W   #6,D4
-00001C36  1C04                    1386      MOVE.B  D4,D6   * Prime D6 register
-00001C38                          1387      
-00001C38                          1388      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001C38  48E7 FF00               1389      MOVEM.L D0-D7,-(SP) * Move register contents to stack
-00001C3C                          1390  
-00001C3C  43F9 00001FFA           1391      LEA     COMMA,A1
-00001C42  4EB9 00001E28           1392      JSR     PRINT_BUFF
-00001C48                          1393      
-00001C48  4EB9 00001CC8           1394      JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
-00001C4E                          1395      
-00001C4E                          1396      * MOVEM RETURN
-00001C4E  4CDF 00FF               1397      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001C52                          1398  
-00001C52                          1399      
-00001C52  4E75                    1400      RTS
-00001C54                          1401  *------------------------------------------------------------
-00001C54                          1402  *-----------HANDLE ADD FORMAT EA DESTINATION EA -------------
-00001C54                          1403  ADDFORMAT_EA_DEST_EA
-00001C54                          1404      
-00001C54  3803                    1405      MOVE.W  D3,D4
-00001C56  C87C 0E00               1406      AND.W   #%0000111000000000,D4 * Isolate Register #
-00001C5A  E64C                    1407      LSR.W   #3,D4
-00001C5C  EC4C                    1408      LSR.W   #6,D4
-00001C5E  1C04                    1409      MOVE.B  D4,D6   * Prime D6 register
-00001C60                          1410      
-00001C60                          1411      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001C60                          1412  
-00001C60  48E7 FF00               1413      MOVEM.L D0-D7,-(SP) * Move register contents to stack
-00001C64                          1414      
-00001C64  4EB9 00001CC8           1415      JSR     EA_SUB * Handle the source EA
-00001C6A                          1416      
-00001C6A                          1417      * MOVEM RETURN
-00001C6A  4CDF 00FF               1418      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001C6E                          1419  
-00001C6E                          1420      
-00001C6E  3803                    1421      MOVE.W  D3,D4  * Refresh opcode
-00001C70                          1422  
-00001C70  43F9 00001FFA           1423      LEA     COMMA,A1
-00001C76  4EB9 00001E28           1424      JSR     PRINT_BUFF
-00001C7C                          1425      
-00001C7C  4EB9 00001C84           1426      JSR     EA_SRC * Handle destination EA
-00001C82                          1427  
-00001C82  4E75                    1428      RTS
-00001C84                          1429  
-00001C84                          1430  *------------------------------------------------------------
-00001C84                          1431  *-------------------HANDLE SOURCE EA (last 6 bits)-----------
-00001C84                          1432  EA_SRC
-00001C84                          1433      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001C84  48E7 FF00               1434      MOVEM.L D0-D7,-(SP) * Move register contents to stack
-00001C88                          1435  
-00001C88  3803                    1436      MOVE.W  D3,D4
-00001C8A  C87C 003F               1437      AND.W   #%0000000000111111,D4
-00001C8E  1C04                    1438      MOVE.B  D4,D6
-00001C90                          1439      
-00001C90  4EB9 00001CC8           1440      JSR EA_SUB ** Print source EA bits from bits in D6
+00001C2C  43F9 0000202C           1381      LEA     COMMA,A1
+00001C32  4EB9 00001E5A           1382      JSR     PRINT_BUFF
+00001C38                          1383      
+00001C38  3803                    1384      MOVE.W  D3,D4
+00001C3A  C87C 0E00               1385      AND.W   #%0000111000000000,D4 * Isolate Register #
+00001C3E  E64C                    1386      LSR.W   #3,D4
+00001C40  EC4C                    1387      LSR.W   #6,D4
+00001C42  883C 0008               1388      OR.B    #%00001000,D4 * set as address reg
+00001C46  1C04                    1389      MOVE.B  D4,D6   * Prime D6 register
+00001C48                          1390      
+00001C48                          1391      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001C48  48E7 FF00               1392      MOVEM.L D0-D7,-(SP) * Move register contents to stack
+00001C4C                          1393      
+00001C4C  4EB9 00001CFA           1394      JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
+00001C52                          1395      
+00001C52                          1396      * MOVEM RETURN
+00001C52  4CDF 00FF               1397      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001C56                          1398      
+00001C56                          1399  
+00001C56                          1400  
+00001C56  4E75                    1401      RTS
+00001C58                          1402  *------------------------------------------------------------
+00001C58                          1403  *-----------HANDLE ADD FORMAT DATA DESTINATION EA -----------
+00001C58                          1404  ADDFORMAT_DATA_DEST_EA
+00001C58  4EB9 00001CB6           1405      JSR     EA_SRC * Handle source EA
+00001C5E                          1406      
+00001C5E                          1407      
+00001C5E                          1408      
+00001C5E  3803                    1409      MOVE.W  D3,D4
+00001C60  C87C 0E00               1410      AND.W   #%0000111000000000,D4 * Isolate Register #
+00001C64  E64C                    1411      LSR.W   #3,D4
+00001C66  EC4C                    1412      LSR.W   #6,D4
+00001C68  1C04                    1413      MOVE.B  D4,D6   * Prime D6 register
+00001C6A                          1414      
+00001C6A                          1415      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001C6A  48E7 FF00               1416      MOVEM.L D0-D7,-(SP) * Move register contents to stack
+00001C6E                          1417  
+00001C6E  43F9 0000202C           1418      LEA     COMMA,A1
+00001C74  4EB9 00001E5A           1419      JSR     PRINT_BUFF
+00001C7A                          1420      
+00001C7A  4EB9 00001CFA           1421      JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
+00001C80                          1422      
+00001C80                          1423      * MOVEM RETURN
+00001C80  4CDF 00FF               1424      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001C84                          1425  
+00001C84                          1426      
+00001C84  4E75                    1427      RTS
+00001C86                          1428  *------------------------------------------------------------
+00001C86                          1429  *-----------HANDLE ADD FORMAT EA DESTINATION EA -------------
+00001C86                          1430  ADDFORMAT_EA_DEST_EA
+00001C86                          1431      
+00001C86  3803                    1432      MOVE.W  D3,D4
+00001C88  C87C 0E00               1433      AND.W   #%0000111000000000,D4 * Isolate Register #
+00001C8C  E64C                    1434      LSR.W   #3,D4
+00001C8E  EC4C                    1435      LSR.W   #6,D4
+00001C90  1C04                    1436      MOVE.B  D4,D6   * Prime D6 register
+00001C92                          1437      
+00001C92                          1438      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001C92                          1439  
+00001C92  48E7 FF00               1440      MOVEM.L D0-D7,-(SP) * Move register contents to stack
 00001C96                          1441      
-00001C96                          1442      * MOVEM RETURN
-00001C96  4CDF 00FF               1443      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001C9A  4E75                    1444      RTS
-00001C9C                          1445  *------------------------------------------------------------
-00001C9C                          1446  *------HANDLE DESTINATION EA(6 bits before last 6 bits)------
-00001C9C                          1447  EA_DEST
-00001C9C                          1448      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001C9C  48E7 FF00               1449      MOVEM.L D0-D7,-(SP) * Move register contents to stack
-00001CA0                          1450  
-00001CA0  3803                    1451      MOVE.W  D3,D4
-00001CA2  C87C 0FC0               1452      AND.W #%0000111111000000,D4
-00001CA6  EC4C                    1453      LSR.W #6,D4
-00001CA8  1004                    1454      MOVE.B  D4,D0
-00001CAA  C07C 0007               1455      AND.W #%0000000000000111,D0 * D0 contains mode bits
-00001CAE  1200                    1456      MOVE.B  D0,D1   *MODE (D1) (Curr state: 000 001 in D1)
-00001CB0  2004                    1457      MOVE.L  D4,D0 * D0 contains 6 bit field out of order
-00001CB2  E648                    1458      LSR.W   #3,D0 * D0 contains reg bits (Curr State: 000 010 in D0)
-00001CB4  1400                    1459      MOVE.B  D0,D2   *REG (D2) (Curr State: 000 010 in D2 and D0)
-00001CB6                          1460      
-00001CB6  E709                    1461      LSL.B   #3,D1 * Shift mode into position
-00001CB8                          1462      
-00001CB8  8401                    1463      OR.B    D1,D2   
-00001CBA  1C02                    1464      MOVE.B  D2,D6 *
-00001CBC                          1465      
-00001CBC  4EB9 00001CC8           1466      JSR     EA_SUB
-00001CC2                          1467      
-00001CC2                          1468      * MOVEM RETURN
-00001CC2  4CDF 00FF               1469      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-00001CC6                          1470      
-00001CC6  4E75                    1471      RTS
-00001CC8                          1472  *------------------------------------------------------------ 
-00001CC8                          1473      
-00001CC8                          1474  *-------------------EA Subroutine----------------------------
-00001CC8                          1475  
-00001CC8                          1476  EA_SUB
-00001CC8                          1477  
-00001CC8                          1478              * 1: Process the 6-bit field into D3 (Register bits) and D4 (Mode bits)
-00001CC8  1806                    1479              MOVE.B  D6,D4 * Prime D4 with the full 6-bit field
-00001CCA  C83C 0007               1480              AND.B   #%00000111,D4 * Clear everything but the register bits (BITS READY)
-00001CCE                          1481              
-00001CCE  1606                    1482              MOVE.B  D6,D3 * Prime D3 with the full 6-bit field
-00001CD0  E60B                    1483              LSR.B   #3,D3 * Shift out the register bits to isolate the mode bits (BITS READY)
-00001CD2                          1484                  
-00001CD2                          1485              * 2: Process the MODE BITS:
-00001CD2  B63C 0000               1486  MODE_P      CMP.B   #%00000000,D3   * TEST FOR 000: Dn
-00001CD6  6700 002E               1487              BEQ     DN_MODE
-00001CDA                          1488              
-00001CDA  B63C 0001               1489              CMP.B   #%00000001,D3   * TEST FOR 001: An
-00001CDE  6700 0036               1490              BEQ     AN_MODE
-00001CE2                          1491              
-00001CE2  B63C 0002               1492              CMP.B   #%00000010,D3   * TEST FOR 010: (An)
-00001CE6  6700 003E               1493              BEQ     ANIND_MODE
-00001CEA                          1494              
-00001CEA  B63C 0003               1495              CMP.B   #%00000011,D3   * TEST FOR 011: (An)+
-00001CEE  6700 0046               1496              BEQ     ANINC_MODE
-00001CF2                          1497              
-00001CF2  B63C 0004               1498              CMP.B   #%00000100,D3   * TEST FOR 100: -(An)
-00001CF6  6700 004E               1499              BEQ     ANDEC_MODE
-00001CFA                          1500              
-00001CFA  B63C 0007               1501              CMP.B   #%00000111,D3   * TEST FOR 111: #<data>, (xxx).W, or (xxx).L (or unsupported!)
-00001CFE  6700 0056               1502              BEQ     ABSDAT_MODE
-00001D02                          1503              
-00001D02  6000 011E               1504              BRA     UNSUPP_MODE     * If we made it here, assume an unsupported mode!
-00001D06                          1505              
-00001D06                          1506              
-00001D06  43F9 000020EE           1507  DN_MODE     LEA     PRNT_D,A1
-00001D0C  4EB9 00001E28           1508              JSR     PRINT_BUFF
-00001D12                          1509              
-00001D12  6000 005E               1510              BRA     REG_P
-00001D16                          1511              
-00001D16  43F9 000020F0           1512  AN_MODE     LEA     PRNT_A,A1
-00001D1C  4EB9 00001E28           1513              JSR     PRINT_BUFF
-00001D22                          1514              
-00001D22  6000 004E               1515              BRA     REG_P
-00001D26                          1516  
-00001D26  43F9 000020F2           1517  ANIND_MODE  LEA     PRNT_AI,A1
-00001D2C  4EB9 00001E28           1518              JSR     PRINT_BUFF
-00001D32                          1519              
-00001D32  6000 003E               1520              BRA     REG_P
-00001D36                          1521  
-00001D36  43F9 000020F2           1522  ANINC_MODE  LEA     PRNT_AI,A1  * As of now this is the same as indirect, postdec added after register
-00001D3C  4EB9 00001E28           1523              JSR     PRINT_BUFF
-00001D42                          1524              
-00001D42  6000 002E               1525              BRA     REG_P
-00001D46                          1526  
-00001D46  43F9 000020FA           1527  ANDEC_MODE  LEA     PRNT_DC,A1
-00001D4C  4EB9 00001E28           1528              JSR     PRINT_BUFF
-00001D52                          1529              
-00001D52  6000 001E               1530              BRA     REG_P
-00001D56                          1531              
-00001D56                          1532  
-00001D56                          1533  * DATA / ABSOLUTE ADDRESSING HANDLING (Mode was 111 in D3; need to chk. D4 reg bits for behavior)
-00001D56  B83C 0004               1534  ABSDAT_MODE CMP.B   #%00000100,D4 * TEST FOR 100: #<data>
-00001D5A  6700 005A               1535              BEQ     DATA_MODE
-00001D5E                          1536              
-00001D5E  B83C 0000               1537              CMP.B   #%00000000,D4 * TEST FOR 000: (xxx).W
-00001D62  6700 0076               1538              BEQ     ABSW_MODE
-00001D66                          1539              
-00001D66  B83C 0001               1540              CMP.B   #%00000001,D4 * TEST FOR 001: (xxx).L
-00001D6A  6700 007E               1541              BEQ     ABSL_MODE
-00001D6E                          1542              
-00001D6E  6000 00B2               1543              BRA     UNSUPP_MODE   * If the register is some other val, unsupported!
-00001D72                          1544              
-00001D72                          1545              * 3: Process the REGISTER BITS: (IN D4)
-00001D72  2204                    1546  REG_P       MOVE.L  D4,D1   * Load the register value into D1 for display.
-00001D74  4EB9 00001E34           1547              JSR     PRINT_HEXBUFF
-00001D7A                          1548              
-00001D7A  B63C 0002               1549              CMP.B   #%00000010,D3
-00001D7E  6700 0016               1550              BEQ     END_ONE
-00001D82                          1551              
-00001D82  B63C 0004               1552              CMP.B   #%00000100,D3
-00001D86  6700 000E               1553              BEQ     END_ONE
-00001D8A                          1554              
-00001D8A  B63C 0003               1555              CMP.B   #%00000011,D3
-00001D8E  6700 0016               1556              BEQ     END_TWO
-00001D92                          1557              
-00001D92  6000 0092               1558              BRA     FINISH  * Additional char after register unnecessary, branch to finish
-00001D96                          1559              
-00001D96  43F9 000020F5           1560  END_ONE     LEA     PRNT_CL,A1
-00001D9C  4EB9 00001E28           1561              JSR     PRINT_BUFF
-00001DA2                          1562              
-00001DA2  6000 0082               1563              BRA     FINISH
-00001DA6                          1564  
-00001DA6  43F9 000020F7           1565  END_TWO     LEA     PRNT_IN,A1
-00001DAC  4EB9 00001E28           1566              JSR     PRINT_BUFF
-00001DB2                          1567              
-00001DB2  6000 0072               1568              BRA     FINISH
-00001DB6                          1569  
-00001DB6                          1570  * #<DATA>; RELIES ON D5 CONTAINING SIZE VALUE OF THE INSTRUCTION! (So we know how much data to grab, then what to increment A5 by! (word or long))
-00001DB6                          1571      * If this contains 0, this will not work in this state. D5 MUST have val 1-3 at this point!
-00001DB6  43F9 00002100           1572  DATA_MODE   LEA     PRNT_DT,A1 * Print '#$'
-00001DBC  4EB9 00001E28           1573              JSR     PRINT_BUFF
-00001DC2                          1574              
-00001DC2  BA3C 0001               1575              CMP.B   #1,D5
-00001DC6  6700 0032               1576              BEQ     BYTE
-00001DCA                          1577              
-00001DCA  BA3C 0002               1578              CMP.B   #2,D5
-00001DCE  6700 003A               1579              BEQ     WORD
-00001DD2                          1580              
-00001DD2  BA3C 0003               1581              CMP.B   #3,D5
-00001DD6  6700 003E               1582              BEQ     LONG
-00001DDA                          1583              
-00001DDA                          1584  * (xxx).W;            
-00001DDA  43F9 00002103           1585  ABSW_MODE   LEA     PRNT_HX,A1 * Print '$'
-00001DE0  4EB9 00001E28           1586              JSR     PRINT_BUFF
-00001DE6                          1587              
-00001DE6  6000 0022               1588              BRA     WORD
-00001DEA                          1589              
-00001DEA                          1590  * (xxx).L; Assembler uses this when it sign extends automatically over (xxx).W           
-00001DEA  43F9 00002103           1591  ABSL_MODE   LEA     PRNT_HX,A1 * Print '$'
-00001DF0  4EB9 00001E28           1592              JSR     PRINT_BUFF
-00001DF6                          1593              
-00001DF6  6000 001E               1594              BRA     LONG
-00001DFA                          1595  
-00001DFA                          1596  * Expects format created by assembled machine code, NOT how it is just pushed to memory by (An)!            
-00001DFA  321B                    1597  BYTE        MOVE.W  (A3)+,D1    * Move word of data from curr opcode word pointer to D1, then increment pointer a word.
-00001DFC                          1598              *=MOVE.B  #16,D2      * Prepare to display a hex value
-00001DFC  C27C 00FF               1599              AND.W   #%0000000011111111,D1   * Discard potential word part from byte
-00001E00                          1600              *=MOVE.B  #15,D0      * Set the task to 15
-00001E00                          1601              *=TRAP    #15         * Print the value.
-00001E00  4EB9 00001E34           1602              JSR     PRINT_HEXBUFF
-00001E06                          1603  
-00001E06  6000 001E               1604              BRA     FINISH
-00001E0A                          1605  
-00001E0A  321B                    1606  WORD        MOVE.W  (A3)+,D1    * Move word of data from curr opcode word pointer to D1, then increment pointer a word.
-00001E0C                          1607              *=MOVE.B  #16,D2      * Prepare to display a hex value
-00001E0C                          1608              *=MOVE.B  #15,D0      * Set the task to 15
-00001E0C                          1609              *=TRAP    #15         * Print the value.
-00001E0C  4EB9 00001E34           1610              JSR     PRINT_HEXBUFF
-00001E12                          1611  
-00001E12  6000 0012               1612              BRA     FINISH
-00001E16                          1613  
-00001E16  221B                    1614  LONG        MOVE.L  (A3)+,D1    * Move longword of data from curr opcode word pointer to D1, then increment pointer a longword.
-00001E18                          1615              *=MOVE.B  #16,D2      * Prepare to display a hex value
-00001E18                          1616              *=MOVE.B  #15,D0      * Set the task to 15
-00001E18                          1617              *=TRAP    #15         * Print the value.
-00001E18  4EB9 00001E34           1618              JSR     PRINT_HEXBUFF
-00001E1E                          1619  
-00001E1E  6000 0006               1620              BRA     FINISH
-00001E22                          1621        
-00001E22                          1622              * 4: UNSUPPORTED BRANCH:
-00001E22                          1623  UNSUPP_MODE *LEA     PRNT_ER,A1
-00001E22                          1624              *JSR        PRINT_BUFF * Continue directly onto finishing up from here
-00001E22                          1625              
-00001E22  1E3C 0001               1626              MOVE.B  #1,D7   * Set Good/Bad flag to Bad state (1 bit)
-00001E26                          1627              
-00001E26                          1628              * 5: Finishing up:
-00001E26                          1629  FINISH      
-00001E26                          1630              * Return values stored in stack prior to moving into here into registers.
-00001E26                          1631                  * (Will put here on integration...)
-00001E26                          1632              * A5 currently points to the next needed opcode to process, which could be the following:
-00001E26                          1633                  * Next opcode word instruction
-00001E26                          1634                  * More data corresponding to the next <ea> field for current instruction
-00001E26                          1635              
-00001E26  4E75                    1636              RTS
-00001E28                          1637  
-00001E28                          1638  * POTENTIAL PRINT LOGIC ERROR: HANDLES LSL/R-LIKE INSTRUCTIONS WITH DIRECT NUMBER INCORRECTLY (prints first byte of mem location addr, then the number desired) *********************************
-00001E28                          1639  
-00001E28                          1640  PRINT_BUFF
-00001E28  0C11 0000               1641              CMP.B #0,(A1)
-00001E2C  6700 0056               1642              BEQ RET_PBUFF           * Done copying? Jump back
-00001E30                          1643  
-00001E30  1CD9                    1644              MOVE.B (A1)+,(A6)+      * Copy character to print buffer
-00001E32  60F4                    1645              BRA PRINT_BUFF          * Repeat
-00001E34                          1646  
-00001E34                          1647  PRINT_HEXBUFF
-00001E34  143C 0000               1648              MOVE.B #0,D2
-00001E38  B2BC 00000000           1649              CMP.L #0,D1
-00001E3E  6600 0006               1650              BNE PRINT_HEXBUFF_LP
-00001E42  1CFC 0030               1651              MOVE.B #$30,(A6)+       * Value was 0, print 0
-00001E46                          1652  
-00001E46                          1653  PRINT_HEXBUFF_LP
-00001E46  B2BC 00000000           1654              CMP.L #0,D1
-00001E4C  6700 0036               1655              BEQ RET_PBUFF
-00001E50                          1656              
-00001E50  E999                    1657              ROL.L #4,D1             *Rotate 1 nibble to the left
-00001E52  2001                    1658              MOVE.L D1,D0    
-00001E54  C0BC 0000000F           1659              AND.L #$F,D0            *Isolate the hex value
-00001E5A                          1660              
-00001E5A  0600 0037               1661              ADD.B #$37,D0
-00001E5E  B03C 0040               1662              CMP.B #$40,D0
-00001E62  6E00 0004               1663              BGT   PRINT_HEXBUFF_SKIP
-00001E66  5F00                    1664              SUB.B #$7,D0
-00001E68                          1665      
-00001E68                          1666  PRINT_HEXBUFF_SKIP
-00001E68  B03C 0030               1667              CMP.B #$30,D0           * Going to print a zero
-00001E6C  6600 000A               1668              BNE PRINT_HEXBUFF_YESZERO
-00001E70                          1669  
-00001E70  B43C 0000               1670              CMP.B #0,D2             * Actually, don't
-00001E74  6700 0008               1671              BEQ PRINT_HEXBUFF_NOZERO
-00001E78                          1672  
-00001E78                          1673  PRINT_HEXBUFF_YESZERO
-00001E78  1CC0                    1674              MOVE.B D0,(A6)+
-00001E7A  143C 0001               1675              MOVE.B #1,D2
-00001E7E                          1676  
-00001E7E                          1677  PRINT_HEXBUFF_NOZERO
-00001E7E  C23C 00F0               1678              AND.B #$F0,D1   Clear last nibble
-00001E82  60C2                    1679              BRA PRINT_HEXBUFF_LP
-00001E84                          1680  
-00001E84  4E75                    1681  RET_PBUFF   RTS
-00001E86                          1682  * Put variables and constants here
-00001E86= 50 6C 65 61 73 65 ...   1683  PROMPT_START DC.B 'Please enter starting address in hexadecimal: ' ,0
-00001EB5= 50 6C 65 61 73 65 ...   1684  PROMPT_END DC.B 'Please enter ending address in hexadecimal (must be after starting): ' ,0
-00001EFC= 4572 726F 723A 2...     1685  INVALID_HEX DC.W 'Error: Address must be in valid hexadecimal' ,CR,LF,0
-00001F2E= 44 6F 6E 65 20 72 ...   1686  DONE_MESSAGE DC.B 'Done reading instructions' ,CR,LF,0
-00001F4A= 506C 6561 7365 2...     1687  ENTER_MESSAGE DC.W 'Please press enter to display new screen ' ,CR,LF,0
-00001F7A= 4572 726F 723A 2...     1688  INVALID_ORDER DC.W 'Error: ending address must come after starting',CR,LF,0
-00001FAE= 4469 7361 7373 6...     1689  ASK_REPEAT DC.W 'Disassemble another mem range? (Yes = 0, No = 1) ' ,0 
-00001FE2                          1690  INVALID_MEM_ADDR DS.W 1
-00001FE4= 4441 5441 2000 0...     1691  DATA DC.W 'DATA ',CR,LF,0
-00001FF0                          1692  INVALID_HEX_VAL DS.W 1 
-00001FF2= 20 0D 0A 00             1693  LINE_BREAK DC.B ' ',CR,LF,0
-00001FF6= 2000 0000               1694  SPACE DC.W ' ',0
-00001FFA= 2C00 0000               1695  COMMA DC.W ',',0
-00001FFE                          1696  INSTRUCTION_ADDR DS.B 1
-00002000= 494E 5354 5255 4...     1697  INSTRUCTION_ADDR_MESSAGE DC.W 'INSTRUCTION ADDR',0
-00002012                          1698  OPCODE DS.W 1
-00002014= 4F50 434F 4445 0000     1699  OPCODE_MESSAGE DC.W 'OPCODE',0
-0000201C                          1700  OPERAND1 DS.W 1
-0000201E= 4F50 4552 414E 4...     1701  OPERAND1_MESSAGE DC.W 'OPERAND1',0
-00002028                          1702  OPERAND2 DS.W 1
-0000202A= 4F50 4552 414E 4...     1703  OPERAND2_MESSAGE DC.W 'OPERAND2',0
-00002034                          1704  
-00002034                          1705  GOOD_BAD_FLAG DS.B 1
-00002035                          1706  
-00002036                          1707  START_ADDR DS.W 4
-0000203E                          1708  END_ADDR DS.W 4
-00002046                          1709  
-00002046= 45 6E 74 65 72 20 ...   1710  INPUT_MSG   DC.B    'Enter machine code: ',0
-0000205C                          1711  INPUT       DS.L    1
-00002060= 49 6E 76 61 6C 69 ...   1712  INVALID_MSG DC.B    'Invalid Instruction',CR,LF,0
-00002076                          1713  
-00002076= 2E 42 20 00             1714  PRNT_B      DC.B    '.B ',0
-0000207A= 2E 57 20 00             1715  PRNT_W      DC.B    '.W ',0
-0000207E= 2E 4C 20 00             1716  PRNT_L      DC.B    '.L ',0
-00002082                          1717  
-00002082= 4E 4F 50 00             1718  PRNT_NOP    DC.B    'NOP',0
-00002086= 52 54 53 00             1719  PRNT_RTS    DC.B    'RTS',0
-0000208A= 4D 4F 56 45 00          1720  PRNT_MOVE   DC.B    'MOVE',0
-0000208F= 4D 4F 56 45 41 00       1721  PRNT_MOVEA  DC.B    'MOVEA',0
-00002095= 4D 4F 56 45 4D 00       1722  PRNT_MOVEM  DC.B    'MOVEM',0
-0000209B= 4D 4F 56 45 51 00       1723  PRNT_MOVEQ  DC.B    'MOVEQ',0
-000020A1= 4A 53 52 00             1724  PRNT_JSR    DC.B    'JSR',0
-000020A5= 42 47 54 00             1725  PRNT_BGT    DC.B    'BGT',0
-000020A9= 42 4C 45 00             1726  PRNT_BLE    DC.B    'BLE',0
-000020AD= 42 45 51 00             1727  PRNT_BEQ    DC.B    'BEQ',0
-000020B1= 42 52 41 00             1728  PRNT_BRA    DC.B    'BRA',0
-000020B5= 4E 4F 54 00             1729  PRNT_NOT    DC.B    'NOT',0
-000020B9= 4F 52 00                1730  PRNT_OR     DC.B    'OR',0
-000020BC= 4C 45 41 00             1731  PRNT_LEA    DC.B    'LEA',0
-000020C0= 41 44 44 51 00          1732  PRNT_ADDQ   DC.B    'ADDQ',0
-000020C5= 41 44 44 00             1733  PRNT_ADD    DC.B    'ADD',0
-000020C9= 41 44 44 41 00          1734  PRNT_ADDA   DC.B    'ADDA',0
-000020CE= 41 4E 44 00             1735  PRNT_AND    DC.B    'AND',0
-000020D2= 53 55 42 00             1736  PRNT_SUB    DC.B    'SUB',0
-000020D6= 41 53 4C 00             1737  PRNT_ASL    DC.B    'ASL',0
-000020DA= 41 53 52 00             1738  PRNT_ASR    DC.B    'ASR',0
-000020DE= 4C 53 4C 00             1739  PRNT_LSL    DC.B    'LSL',0
-000020E2= 4C 53 52 00             1740  PRNT_LSR    DC.B    'LSR',0
-000020E6= 52 4F 4C 00             1741  PRNT_ROL    DC.B    'ROL',0
-000020EA= 52 4F 52 00             1742  PRNT_ROR    DC.B    'ROR',0
-000020EE                          1743  
-000020EE= 44 00                   1744  PRNT_D  DC.B    'D',0
-000020F0= 41 00                   1745  PRNT_A  DC.B    'A',0
-000020F2= 28 41 00                1746  PRNT_AI DC.B    '(A',0
-000020F5= 29 00                   1747  PRNT_CL DC.B    ')',0
-000020F7= 29 2B 00                1748  PRNT_IN DC.B    ')+',0
-000020FA= 2D 28 41 00             1749  PRNT_DC DC.B    '-(A',0
-000020FE                          1750  
-000020FE= 23 00                   1751  PRNT_Q  DC.B    '#',0
-00002100= 23 24 00                1752  PRNT_DT DC.B    '#$',0
-00002103= 24 00                   1753  PRNT_HX DC.B    '$',0
-00002105                          1754  
-00002105= 45 52 52 4F 52 3A ...   1755  PRNT_ER DC.B    'ERROR: Unsupported EA Mode',0
-00002120                          1756  
-00002120                          1757  *D3 = original instruction
-00002120                          1758  *D4 = copy of instruction
-00002120                          1759  *D6 = num of bits to shift
-00002120                          1760  
-00002120                          1761      
-00002120                          1762  
-00002120                          1763  DONE
-00002120  43F8 1F2E               1764      LEA DONE_MESSAGE, A1
-00002124  4EB8 1E28               1765      JSR     PRINT_BUFF
-00002128                          1766      END    START        ; last line of source
+00001C96  4EB9 00001CFA           1442      JSR     EA_SUB * Handle the source EA
+00001C9C                          1443      
+00001C9C                          1444      * MOVEM RETURN
+00001C9C  4CDF 00FF               1445      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001CA0                          1446  
+00001CA0                          1447      
+00001CA0  3803                    1448      MOVE.W  D3,D4  * Refresh opcode
+00001CA2                          1449  
+00001CA2  43F9 0000202C           1450      LEA     COMMA,A1
+00001CA8  4EB9 00001E5A           1451      JSR     PRINT_BUFF
+00001CAE                          1452      
+00001CAE  4EB9 00001CB6           1453      JSR     EA_SRC * Handle destination EA
+00001CB4                          1454  
+00001CB4  4E75                    1455      RTS
+00001CB6                          1456  
+00001CB6                          1457  *------------------------------------------------------------
+00001CB6                          1458  *-------------------HANDLE SOURCE EA (last 6 bits)-----------
+00001CB6                          1459  EA_SRC
+00001CB6                          1460      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001CB6  48E7 FF00               1461      MOVEM.L D0-D7,-(SP) * Move register contents to stack
+00001CBA                          1462  
+00001CBA  3803                    1463      MOVE.W  D3,D4
+00001CBC  C87C 003F               1464      AND.W   #%0000000000111111,D4
+00001CC0  1C04                    1465      MOVE.B  D4,D6
+00001CC2                          1466      
+00001CC2  4EB9 00001CFA           1467      JSR EA_SUB ** Print source EA bits from bits in D6
+00001CC8                          1468      
+00001CC8                          1469      * MOVEM RETURN
+00001CC8  4CDF 00FF               1470      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001CCC  4E75                    1471      RTS
+00001CCE                          1472  *------------------------------------------------------------
+00001CCE                          1473  *------HANDLE DESTINATION EA(6 bits before last 6 bits)------
+00001CCE                          1474  EA_DEST
+00001CCE                          1475      * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001CCE  48E7 FF00               1476      MOVEM.L D0-D7,-(SP) * Move register contents to stack
+00001CD2                          1477  
+00001CD2  3803                    1478      MOVE.W  D3,D4
+00001CD4  C87C 0FC0               1479      AND.W #%0000111111000000,D4
+00001CD8  EC4C                    1480      LSR.W #6,D4
+00001CDA  1004                    1481      MOVE.B  D4,D0
+00001CDC  C07C 0007               1482      AND.W #%0000000000000111,D0 * D0 contains mode bits
+00001CE0  1200                    1483      MOVE.B  D0,D1   *MODE (D1) (Curr state: 000 001 in D1)
+00001CE2  2004                    1484      MOVE.L  D4,D0 * D0 contains 6 bit field out of order
+00001CE4  E648                    1485      LSR.W   #3,D0 * D0 contains reg bits (Curr State: 000 010 in D0)
+00001CE6  1400                    1486      MOVE.B  D0,D2   *REG (D2) (Curr State: 000 010 in D2 and D0)
+00001CE8                          1487      
+00001CE8  E709                    1488      LSL.B   #3,D1 * Shift mode into position
+00001CEA                          1489      
+00001CEA  8401                    1490      OR.B    D1,D2   
+00001CEC  1C02                    1491      MOVE.B  D2,D6 *
+00001CEE                          1492      
+00001CEE  4EB9 00001CFA           1493      JSR     EA_SUB
+00001CF4                          1494      
+00001CF4                          1495      * MOVEM RETURN
+00001CF4  4CDF 00FF               1496      MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+00001CF8                          1497      
+00001CF8  4E75                    1498      RTS
+00001CFA                          1499  *------------------------------------------------------------ 
+00001CFA                          1500      
+00001CFA                          1501  *-------------------EA Subroutine----------------------------
+00001CFA                          1502  
+00001CFA                          1503  EA_SUB
+00001CFA                          1504  
+00001CFA                          1505              * 1: Process the 6-bit field into D3 (Register bits) and D4 (Mode bits)
+00001CFA  1806                    1506              MOVE.B  D6,D4 * Prime D4 with the full 6-bit field
+00001CFC  C83C 0007               1507              AND.B   #%00000111,D4 * Clear everything but the register bits (BITS READY)
+00001D00                          1508              
+00001D00  1606                    1509              MOVE.B  D6,D3 * Prime D3 with the full 6-bit field
+00001D02  E60B                    1510              LSR.B   #3,D3 * Shift out the register bits to isolate the mode bits (BITS READY)
+00001D04                          1511                  
+00001D04                          1512              * 2: Process the MODE BITS:
+00001D04  B63C 0000               1513  MODE_P      CMP.B   #%00000000,D3   * TEST FOR 000: Dn
+00001D08  6700 002E               1514              BEQ     DN_MODE
+00001D0C                          1515              
+00001D0C  B63C 0001               1516              CMP.B   #%00000001,D3   * TEST FOR 001: An
+00001D10  6700 0036               1517              BEQ     AN_MODE
+00001D14                          1518              
+00001D14  B63C 0002               1519              CMP.B   #%00000010,D3   * TEST FOR 010: (An)
+00001D18  6700 003E               1520              BEQ     ANIND_MODE
+00001D1C                          1521              
+00001D1C  B63C 0003               1522              CMP.B   #%00000011,D3   * TEST FOR 011: (An)+
+00001D20  6700 0046               1523              BEQ     ANINC_MODE
+00001D24                          1524              
+00001D24  B63C 0004               1525              CMP.B   #%00000100,D3   * TEST FOR 100: -(An)
+00001D28  6700 004E               1526              BEQ     ANDEC_MODE
+00001D2C                          1527              
+00001D2C  B63C 0007               1528              CMP.B   #%00000111,D3   * TEST FOR 111: #<data>, (xxx).W, or (xxx).L (or unsupported!)
+00001D30  6700 0056               1529              BEQ     ABSDAT_MODE
+00001D34                          1530              
+00001D34  6000 011E               1531              BRA     UNSUPP_MODE     * If we made it here, assume an unsupported mode!
+00001D38                          1532              
+00001D38                          1533              
+00001D38  43F9 00002120           1534  DN_MODE     LEA     PRNT_D,A1
+00001D3E  4EB9 00001E5A           1535              JSR     PRINT_BUFF
+00001D44                          1536              
+00001D44  6000 005E               1537              BRA     REG_P
+00001D48                          1538              
+00001D48  43F9 00002122           1539  AN_MODE     LEA     PRNT_A,A1
+00001D4E  4EB9 00001E5A           1540              JSR     PRINT_BUFF
+00001D54                          1541              
+00001D54  6000 004E               1542              BRA     REG_P
+00001D58                          1543  
+00001D58  43F9 00002124           1544  ANIND_MODE  LEA     PRNT_AI,A1
+00001D5E  4EB9 00001E5A           1545              JSR     PRINT_BUFF
+00001D64                          1546              
+00001D64  6000 003E               1547              BRA     REG_P
+00001D68                          1548  
+00001D68  43F9 00002124           1549  ANINC_MODE  LEA     PRNT_AI,A1  * As of now this is the same as indirect, postdec added after register
+00001D6E  4EB9 00001E5A           1550              JSR     PRINT_BUFF
+00001D74                          1551              
+00001D74  6000 002E               1552              BRA     REG_P
+00001D78                          1553  
+00001D78  43F9 0000212C           1554  ANDEC_MODE  LEA     PRNT_DC,A1
+00001D7E  4EB9 00001E5A           1555              JSR     PRINT_BUFF
+00001D84                          1556              
+00001D84  6000 001E               1557              BRA     REG_P
+00001D88                          1558              
+00001D88                          1559  
+00001D88                          1560  * DATA / ABSOLUTE ADDRESSING HANDLING (Mode was 111 in D3; need to chk. D4 reg bits for behavior)
+00001D88  B83C 0004               1561  ABSDAT_MODE CMP.B   #%00000100,D4 * TEST FOR 100: #<data>
+00001D8C  6700 005A               1562              BEQ     DATA_MODE
+00001D90                          1563              
+00001D90  B83C 0000               1564              CMP.B   #%00000000,D4 * TEST FOR 000: (xxx).W
+00001D94  6700 0076               1565              BEQ     ABSW_MODE
+00001D98                          1566              
+00001D98  B83C 0001               1567              CMP.B   #%00000001,D4 * TEST FOR 001: (xxx).L
+00001D9C  6700 007E               1568              BEQ     ABSL_MODE
+00001DA0                          1569              
+00001DA0  6000 00B2               1570              BRA     UNSUPP_MODE   * If the register is some other val, unsupported!
+00001DA4                          1571              
+00001DA4                          1572              * 3: Process the REGISTER BITS: (IN D4)
+00001DA4  2204                    1573  REG_P       MOVE.L  D4,D1   * Load the register value into D1 for display.
+00001DA6  4EB9 00001E66           1574              JSR     PRINT_HEXBUFF
+00001DAC                          1575              
+00001DAC  B63C 0002               1576              CMP.B   #%00000010,D3
+00001DB0  6700 0016               1577              BEQ     END_ONE
+00001DB4                          1578              
+00001DB4  B63C 0004               1579              CMP.B   #%00000100,D3
+00001DB8  6700 000E               1580              BEQ     END_ONE
+00001DBC                          1581              
+00001DBC  B63C 0003               1582              CMP.B   #%00000011,D3
+00001DC0  6700 0016               1583              BEQ     END_TWO
+00001DC4                          1584              
+00001DC4  6000 0092               1585              BRA     FINISH  * Additional char after register unnecessary, branch to finish
+00001DC8                          1586              
+00001DC8  43F9 00002127           1587  END_ONE     LEA     PRNT_CL,A1
+00001DCE  4EB9 00001E5A           1588              JSR     PRINT_BUFF
+00001DD4                          1589              
+00001DD4  6000 0082               1590              BRA     FINISH
+00001DD8                          1591  
+00001DD8  43F9 00002129           1592  END_TWO     LEA     PRNT_IN,A1
+00001DDE  4EB9 00001E5A           1593              JSR     PRINT_BUFF
+00001DE4                          1594              
+00001DE4  6000 0072               1595              BRA     FINISH
+00001DE8                          1596  
+00001DE8                          1597  * #<DATA>; RELIES ON D5 CONTAINING SIZE VALUE OF THE INSTRUCTION! (So we know how much data to grab, then what to increment A5 by! (word or long))
+00001DE8                          1598      * If this contains 0, this will not work in this state. D5 MUST have val 1-3 at this point!
+00001DE8  43F9 00002132           1599  DATA_MODE   LEA     PRNT_DT,A1 * Print '#$'
+00001DEE  4EB9 00001E5A           1600              JSR     PRINT_BUFF
+00001DF4                          1601              
+00001DF4  BA3C 0001               1602              CMP.B   #1,D5
+00001DF8  6700 0032               1603              BEQ     BYTE
+00001DFC                          1604              
+00001DFC  BA3C 0002               1605              CMP.B   #2,D5
+00001E00  6700 003A               1606              BEQ     WORD
+00001E04                          1607              
+00001E04  BA3C 0003               1608              CMP.B   #3,D5
+00001E08  6700 003E               1609              BEQ     LONG
+00001E0C                          1610              
+00001E0C                          1611  * (xxx).W;            
+00001E0C  43F9 00002135           1612  ABSW_MODE   LEA     PRNT_HX,A1 * Print '$'
+00001E12  4EB9 00001E5A           1613              JSR     PRINT_BUFF
+00001E18                          1614              
+00001E18  6000 0022               1615              BRA     WORD
+00001E1C                          1616              
+00001E1C                          1617  * (xxx).L; Assembler uses this when it sign extends automatically over (xxx).W           
+00001E1C  43F9 00002135           1618  ABSL_MODE   LEA     PRNT_HX,A1 * Print '$'
+00001E22  4EB9 00001E5A           1619              JSR     PRINT_BUFF
+00001E28                          1620              
+00001E28  6000 001E               1621              BRA     LONG
+00001E2C                          1622  
+00001E2C                          1623  * Expects format created by assembled machine code, NOT how it is just pushed to memory by (An)!            
+00001E2C  321B                    1624  BYTE        MOVE.W  (A3)+,D1    * Move word of data from curr opcode word pointer to D1, then increment pointer a word.
+00001E2E                          1625              *=MOVE.B  #16,D2      * Prepare to display a hex value
+00001E2E  C27C 00FF               1626              AND.W   #%0000000011111111,D1   * Discard potential word part from byte
+00001E32                          1627              *=MOVE.B  #15,D0      * Set the task to 15
+00001E32                          1628              *=TRAP    #15         * Print the value.
+00001E32  4EB9 00001E66           1629              JSR     PRINT_HEXBUFF
+00001E38                          1630  
+00001E38  6000 001E               1631              BRA     FINISH
+00001E3C                          1632  
+00001E3C  321B                    1633  WORD        MOVE.W  (A3)+,D1    * Move word of data from curr opcode word pointer to D1, then increment pointer a word.
+00001E3E                          1634              *=MOVE.B  #16,D2      * Prepare to display a hex value
+00001E3E                          1635              *=MOVE.B  #15,D0      * Set the task to 15
+00001E3E                          1636              *=TRAP    #15         * Print the value.
+00001E3E  4EB9 00001E66           1637              JSR     PRINT_HEXBUFF
+00001E44                          1638  
+00001E44  6000 0012               1639              BRA     FINISH
+00001E48                          1640  
+00001E48  221B                    1641  LONG        MOVE.L  (A3)+,D1    * Move longword of data from curr opcode word pointer to D1, then increment pointer a longword.
+00001E4A                          1642              *=MOVE.B  #16,D2      * Prepare to display a hex value
+00001E4A                          1643              *=MOVE.B  #15,D0      * Set the task to 15
+00001E4A                          1644              *=TRAP    #15         * Print the value.
+00001E4A  4EB9 00001E66           1645              JSR     PRINT_HEXBUFF
+00001E50                          1646  
+00001E50  6000 0006               1647              BRA     FINISH
+00001E54                          1648        
+00001E54                          1649              * 4: UNSUPPORTED BRANCH:
+00001E54                          1650  UNSUPP_MODE *LEA     PRNT_ER,A1
+00001E54                          1651              *JSR        PRINT_BUFF * Continue directly onto finishing up from here
+00001E54                          1652              
+00001E54  1E3C 0001               1653              MOVE.B  #1,D7   * Set Good/Bad flag to Bad state (1 bit)
+00001E58                          1654              
+00001E58                          1655              * 5: Finishing up:
+00001E58                          1656  FINISH      
+00001E58                          1657              * Return values stored in stack prior to moving into here into registers.
+00001E58                          1658                  * (Will put here on integration...)
+00001E58                          1659              * A5 currently points to the next needed opcode to process, which could be the following:
+00001E58                          1660                  * Next opcode word instruction
+00001E58                          1661                  * More data corresponding to the next <ea> field for current instruction
+00001E58                          1662              
+00001E58  4E75                    1663              RTS
+00001E5A                          1664  
+00001E5A                          1665  * POTENTIAL PRINT LOGIC ERROR: HANDLES LSL/R-LIKE INSTRUCTIONS WITH DIRECT NUMBER INCORRECTLY (prints first byte of mem location addr, then the number desired) *********************************
+00001E5A                          1666  
+00001E5A                          1667  PRINT_BUFF
+00001E5A  0C11 0000               1668              CMP.B #0,(A1)
+00001E5E  6700 0056               1669              BEQ RET_PBUFF           * Done copying? Jump back
+00001E62                          1670  
+00001E62  1CD9                    1671              MOVE.B (A1)+,(A6)+      * Copy character to print buffer
+00001E64  60F4                    1672              BRA PRINT_BUFF          * Repeat
+00001E66                          1673  
+00001E66                          1674  PRINT_HEXBUFF
+00001E66  143C 0000               1675              MOVE.B #0,D2
+00001E6A  B2BC 00000000           1676              CMP.L #0,D1
+00001E70  6600 0006               1677              BNE PRINT_HEXBUFF_LP
+00001E74  1CFC 0030               1678              MOVE.B #$30,(A6)+       * Value was 0, print 0
+00001E78                          1679  
+00001E78                          1680  PRINT_HEXBUFF_LP
+00001E78  B2BC 00000000           1681              CMP.L #0,D1
+00001E7E  6700 0036               1682              BEQ RET_PBUFF
+00001E82                          1683              
+00001E82  E999                    1684              ROL.L #4,D1             *Rotate 1 nibble to the left
+00001E84  2001                    1685              MOVE.L D1,D0    
+00001E86  C0BC 0000000F           1686              AND.L #$F,D0            *Isolate the hex value
+00001E8C                          1687              
+00001E8C  0600 0037               1688              ADD.B #$37,D0
+00001E90  B03C 0040               1689              CMP.B #$40,D0
+00001E94  6E00 0004               1690              BGT   PRINT_HEXBUFF_SKIP
+00001E98  5F00                    1691              SUB.B #$7,D0
+00001E9A                          1692      
+00001E9A                          1693  PRINT_HEXBUFF_SKIP
+00001E9A  B03C 0030               1694              CMP.B #$30,D0           * Going to print a zero
+00001E9E  6600 000A               1695              BNE PRINT_HEXBUFF_YESZERO
+00001EA2                          1696  
+00001EA2  B43C 0000               1697              CMP.B #0,D2             * Actually, don't
+00001EA6  6700 0008               1698              BEQ PRINT_HEXBUFF_NOZERO
+00001EAA                          1699  
+00001EAA                          1700  PRINT_HEXBUFF_YESZERO
+00001EAA  1CC0                    1701              MOVE.B D0,(A6)+
+00001EAC  143C 0001               1702              MOVE.B #1,D2
+00001EB0                          1703  
+00001EB0                          1704  PRINT_HEXBUFF_NOZERO
+00001EB0  C23C 00F0               1705              AND.B #$F0,D1   Clear last nibble
+00001EB4  60C2                    1706              BRA PRINT_HEXBUFF_LP
+00001EB6                          1707  
+00001EB6  4E75                    1708  RET_PBUFF   RTS
+00001EB8                          1709  * Put variables and constants here
+00001EB8= 50 6C 65 61 73 65 ...   1710  PROMPT_START DC.B 'Please enter starting address in hexadecimal: ' ,0
+00001EE7= 50 6C 65 61 73 65 ...   1711  PROMPT_END DC.B 'Please enter ending address in hexadecimal (must be after starting): ' ,0
+00001F2E= 4572 726F 723A 2...     1712  INVALID_HEX DC.W 'Error: Address must be in valid hexadecimal' ,CR,LF,0
+00001F60= 44 6F 6E 65 20 72 ...   1713  DONE_MESSAGE DC.B 'Done reading instructions' ,CR,LF,0
+00001F7C= 506C 6561 7365 2...     1714  ENTER_MESSAGE DC.W 'Please press enter to display new screen ' ,CR,LF,0
+00001FAC= 4572 726F 723A 2...     1715  INVALID_ORDER DC.W 'Error: ending address must come after starting',CR,LF,0
+00001FE0= 4469 7361 7373 6...     1716  ASK_REPEAT DC.W 'Disassemble another mem range? (Yes = 0, No = 1) ' ,0 
+00002014                          1717  INVALID_MEM_ADDR DS.W 1
+00002016= 4441 5441 2000 0...     1718  DATA DC.W 'DATA ',CR,LF,0
+00002022                          1719  INVALID_HEX_VAL DS.W 1 
+00002024= 20 0D 0A 00             1720  LINE_BREAK DC.B ' ',CR,LF,0
+00002028= 2000 0000               1721  SPACE DC.W ' ',0
+0000202C= 2C00 0000               1722  COMMA DC.W ',',0
+00002030                          1723  INSTRUCTION_ADDR DS.B 1
+00002032= 494E 5354 5255 4...     1724  INSTRUCTION_ADDR_MESSAGE DC.W 'INSTRUCTION ADDR',0
+00002044                          1725  OPCODE DS.W 1
+00002046= 4F50 434F 4445 0000     1726  OPCODE_MESSAGE DC.W 'OPCODE',0
+0000204E                          1727  OPERAND1 DS.W 1
+00002050= 4F50 4552 414E 4...     1728  OPERAND1_MESSAGE DC.W 'OPERAND1',0
+0000205A                          1729  OPERAND2 DS.W 1
+0000205C= 4F50 4552 414E 4...     1730  OPERAND2_MESSAGE DC.W 'OPERAND2',0
+00002066                          1731  
+00002066                          1732  GOOD_BAD_FLAG DS.B 1
+00002067                          1733  
+00002068                          1734  START_ADDR DS.W 4
+00002070                          1735  END_ADDR DS.W 4
+00002078                          1736  
+00002078= 45 6E 74 65 72 20 ...   1737  INPUT_MSG   DC.B    'Enter machine code: ',0
+0000208E                          1738  INPUT       DS.L    1
+00002092= 49 6E 76 61 6C 69 ...   1739  INVALID_MSG DC.B    'Invalid Instruction',CR,LF,0
+000020A8                          1740  
+000020A8= 2E 42 20 00             1741  PRNT_B      DC.B    '.B ',0
+000020AC= 2E 57 20 00             1742  PRNT_W      DC.B    '.W ',0
+000020B0= 2E 4C 20 00             1743  PRNT_L      DC.B    '.L ',0
+000020B4                          1744  
+000020B4= 4E 4F 50 00             1745  PRNT_NOP    DC.B    'NOP',0
+000020B8= 52 54 53 00             1746  PRNT_RTS    DC.B    'RTS',0
+000020BC= 4D 4F 56 45 00          1747  PRNT_MOVE   DC.B    'MOVE',0
+000020C1= 4D 4F 56 45 41 00       1748  PRNT_MOVEA  DC.B    'MOVEA',0
+000020C7= 4D 4F 56 45 4D 00       1749  PRNT_MOVEM  DC.B    'MOVEM',0
+000020CD= 4D 4F 56 45 51 00       1750  PRNT_MOVEQ  DC.B    'MOVEQ',0
+000020D3= 4A 53 52 00             1751  PRNT_JSR    DC.B    'JSR',0
+000020D7= 42 47 54 00             1752  PRNT_BGT    DC.B    'BGT',0
+000020DB= 42 4C 45 00             1753  PRNT_BLE    DC.B    'BLE',0
+000020DF= 42 45 51 00             1754  PRNT_BEQ    DC.B    'BEQ',0
+000020E3= 42 52 41 00             1755  PRNT_BRA    DC.B    'BRA',0
+000020E7= 4E 4F 54 00             1756  PRNT_NOT    DC.B    'NOT',0
+000020EB= 4F 52 00                1757  PRNT_OR     DC.B    'OR',0
+000020EE= 4C 45 41 00             1758  PRNT_LEA    DC.B    'LEA',0
+000020F2= 41 44 44 51 00          1759  PRNT_ADDQ   DC.B    'ADDQ',0
+000020F7= 41 44 44 00             1760  PRNT_ADD    DC.B    'ADD',0
+000020FB= 41 44 44 41 00          1761  PRNT_ADDA   DC.B    'ADDA',0
+00002100= 41 4E 44 00             1762  PRNT_AND    DC.B    'AND',0
+00002104= 53 55 42 00             1763  PRNT_SUB    DC.B    'SUB',0
+00002108= 41 53 4C 00             1764  PRNT_ASL    DC.B    'ASL',0
+0000210C= 41 53 52 00             1765  PRNT_ASR    DC.B    'ASR',0
+00002110= 4C 53 4C 00             1766  PRNT_LSL    DC.B    'LSL',0
+00002114= 4C 53 52 00             1767  PRNT_LSR    DC.B    'LSR',0
+00002118= 52 4F 4C 00             1768  PRNT_ROL    DC.B    'ROL',0
+0000211C= 52 4F 52 00             1769  PRNT_ROR    DC.B    'ROR',0
+00002120                          1770  
+00002120= 44 00                   1771  PRNT_D  DC.B    'D',0
+00002122= 41 00                   1772  PRNT_A  DC.B    'A',0
+00002124= 28 41 00                1773  PRNT_AI DC.B    '(A',0
+00002127= 29 00                   1774  PRNT_CL DC.B    ')',0
+00002129= 29 2B 00                1775  PRNT_IN DC.B    ')+',0
+0000212C= 2D 28 41 00             1776  PRNT_DC DC.B    '-(A',0
+00002130                          1777  
+00002130= 23 00                   1778  PRNT_Q  DC.B    '#',0
+00002132= 23 24 00                1779  PRNT_DT DC.B    '#$',0
+00002135= 24 00                   1780  PRNT_HX DC.B    '$',0
+00002137                          1781  
+00002137= 45 52 52 4F 52 3A ...   1782  PRNT_ER DC.B    'ERROR: Unsupported EA Mode',0
+00002152                          1783  
+00002152                          1784  *D3 = original instruction
+00002152                          1785  *D4 = copy of instruction
+00002152                          1786  *D6 = num of bits to shift
+00002152                          1787  
+00002152                          1788      
+00002152                          1789  
+00002152                          1790  DONE
+00002152  43F8 1F60               1791      LEA DONE_MESSAGE, A1
+00002156  4EB8 1E5A               1792      JSR     PRINT_BUFF
+0000215A                          1793      END    START        ; last line of source
 
 No errors detected
 No warnings generated
@@ -1776,13 +1803,14 @@ No warnings generated
 SYMBOL TABLE INFORMATION
 Symbol-name         Value
 -------------------------
-ABSDAT_MODE         1D56
-ABSL_MODE           1DEA
-ABSW_MODE           1DDA
+ABSDAT_MODE         1D88
+ABSL_MODE           1E1C
+ABSW_MODE           1E0C
+ADDAFORMAT_EA       1C26
 ADDA_L              1934
 ADDA_W              1922
-ADDFORMAT_DATA_DEST_EA  1C26
-ADDFORMAT_EA_DEST_EA  1C54
+ADDFORMAT_DATA_DEST_EA  1C58
+ADDFORMAT_EA_DEST_EA  1C86
 ADDQ_B              1518
 ADDQ_DATA           1536
 ADDQ_L              152C
@@ -1793,61 +1821,61 @@ ADD_L               1910
 ADD_L_D             18DA
 ADD_W               18FE
 ADD_W_D             18C8
-ANDEC_MODE          1D46
+ANDEC_MODE          1D78
 AND_B               1822
 AND_B_D             17F8
 AND_L               183E
 AND_L_D             1814
 AND_W               1830
 AND_W_D             1806
-ANINC_MODE          1D36
-ANIND_MODE          1D26
-AN_MODE             1D16
-ASK_REPEAT          1FAE
+ANINC_MODE          1D68
+ANIND_MODE          1D58
+AN_MODE             1D48
+ASK_REPEAT          1FE0
 A_MEM               19CA
 A_REG               19A2
 A_SIZE              19C6
-BYTE                1DFA
+BYTE                1E2C
 CLEAR_REG           11E8
-COMMA               1FFA
+COMMA               202C
 CONV_NUM            107C
 CONV_STRING         1038
 CR                  D
-DATA                1FE4
-DATA_MODE           1DB6
+DATA                2016
+DATA_MODE           1DE8
 DISP                15DA
 DISPLAY_INVALID_HEX  105E
 DISPLAY_INVALID_INSTRUCTION  1154
 DISPLAY_INVALID_ORDER  10C0
 DISP_16             1608
 DISP_32             161E
-DN_MODE             1D06
-DONE                2120
+DN_MODE             1D38
+DONE                2152
 DONE_END_CONV       10AE
-DONE_MESSAGE        1F2E
+DONE_MESSAGE        1F60
 DONE_START_CONV     109C
 DO_SHIFT_EA         1B68
-EA_DEST             1C9C
-EA_SRC              1C84
-EA_SUB              1CC8
-END_ADDR            203E
-END_ONE             1D96
-END_TWO             1DA6
-ENTER_MESSAGE       1F4A
+EA_DEST             1CCE
+EA_SRC              1CB6
+EA_SUB              1CFA
+END_ADDR            2070
+END_ONE             1DC8
+END_TWO             1DD8
+ENTER_MESSAGE       1F7C
 FIND_OP             124C
-FINISH              1E26
+FINISH              1E58
 GET_SHFT_SIZE       1B0A
-GOOD_BAD_FLAG       2034
-INPUT               205C
-INPUT_MSG           2046
-INSTRUCTION_ADDR    1FFE
-INSTRUCTION_ADDR_MESSAGE  2000
-INVALID_HEX         1EFC
-INVALID_HEX_VAL     1FF0
-INVALID_MEM_ADDR    1FE2
-INVALID_MSG         2060
+GOOD_BAD_FLAG       2066
+INPUT               208E
+INPUT_MSG           2078
+INSTRUCTION_ADDR    2030
+INSTRUCTION_ADDR_MESSAGE  2032
+INVALID_HEX         1F2E
+INVALID_HEX_VAL     2022
+INVALID_MEM_ADDR    2014
+INVALID_MSG         2092
 INVALID_OP          1BCE
-INVALID_ORDER       1F7A
+INVALID_ORDER       1FAC
 IS_ADD              189A
 IS_ADDA             18A8
 IS_ASL              1A00
@@ -1868,12 +1896,12 @@ IS_ROL              1AE8
 IS_ROR              1AD2
 IS_SUB              16F0
 LF                  A
-LINE_BREAK          1FF2
-LONG                1E16
+LINE_BREAK          2024
+LONG                1E48
 L_MEM               1A3E
 L_REG               1A16
 L_SIZE              1A3A
-MODE_P              1CD2
+MODE_P              1D04
 MOVEM_L             14D2
 MOVEM_W             14CC
 MOVE_B              12C8
@@ -1886,12 +1914,12 @@ NOT_B               144A
 NOT_EA              1464
 NOT_L               145E
 NOT_W               1454
-OPCODE              2012
-OPCODE_MESSAGE      2014
-OPERAND1            201C
-OPERAND1_MESSAGE    201E
-OPERAND2            2028
-OPERAND2_MESSAGE    202A
+OPCODE              2044
+OPCODE_MESSAGE      2046
+OPERAND1            204E
+OPERAND1_MESSAGE    2050
+OPERAND2            205A
+OPERAND2_MESSAGE    205C
 OP_00               1274
 OP_01               1328
 OP_0100             13A4
@@ -1912,76 +1940,76 @@ OR_W                16D4
 OR_W_D              16AA
 PBUFF               900
 PRINT_B             1B98
-PRINT_BUFF          1E28
+PRINT_BUFF          1E5A
 PRINT_B_SHIFT       1B2C
-PRINT_HEXBUFF       1E34
-PRINT_HEXBUFF_LP    1E46
-PRINT_HEXBUFF_NOZERO  1E7E
-PRINT_HEXBUFF_SKIP  1E68
-PRINT_HEXBUFF_YESZERO  1E78
+PRINT_HEXBUFF       1E66
+PRINT_HEXBUFF_LP    1E78
+PRINT_HEXBUFF_NOZERO  1EB0
+PRINT_HEXBUFF_SKIP  1E9A
+PRINT_HEXBUFF_YESZERO  1EAA
 PRINT_INSTRUCTIONS  10E4
 PRINT_L             1BBC
 PRINT_L_SHIFT       1B54
 PRINT_W             1BAA
 PRINT_W_SHIFT       1B40
-PRNT_A              20F0
-PRNT_ADD            20C5
-PRNT_ADDA           20C9
-PRNT_ADDQ           20C0
-PRNT_AI             20F2
-PRNT_AND            20CE
-PRNT_ASL            20D6
-PRNT_ASR            20DA
-PRNT_B              2076
-PRNT_BEQ            20AD
-PRNT_BGT            20A5
-PRNT_BLE            20A9
-PRNT_BRA            20B1
-PRNT_CL             20F5
-PRNT_D              20EE
-PRNT_DC             20FA
-PRNT_DT             2100
-PRNT_ER             2105
-PRNT_HX             2103
-PRNT_IN             20F7
-PRNT_JSR            20A1
-PRNT_L              207E
-PRNT_LEA            20BC
-PRNT_LSL            20DE
-PRNT_LSR            20E2
-PRNT_MOVE           208A
-PRNT_MOVEA          208F
-PRNT_MOVEM          2095
-PRNT_MOVEQ          209B
-PRNT_NOP            2082
-PRNT_NOT            20B5
-PRNT_OR             20B9
-PRNT_Q              20FE
-PRNT_ROL            20E6
-PRNT_ROR            20EA
-PRNT_RTS            2086
-PRNT_SUB            20D2
-PRNT_W              207A
-PROMPT_END          1EB5
+PRNT_A              2122
+PRNT_ADD            20F7
+PRNT_ADDA           20FB
+PRNT_ADDQ           20F2
+PRNT_AI             2124
+PRNT_AND            2100
+PRNT_ASL            2108
+PRNT_ASR            210C
+PRNT_B              20A8
+PRNT_BEQ            20DF
+PRNT_BGT            20D7
+PRNT_BLE            20DB
+PRNT_BRA            20E3
+PRNT_CL             2127
+PRNT_D              2120
+PRNT_DC             212C
+PRNT_DT             2132
+PRNT_ER             2137
+PRNT_HX             2135
+PRNT_IN             2129
+PRNT_JSR            20D3
+PRNT_L              20B0
+PRNT_LEA            20EE
+PRNT_LSL            2110
+PRNT_LSR            2114
+PRNT_MOVE           20BC
+PRNT_MOVEA          20C1
+PRNT_MOVEM          20C7
+PRNT_MOVEQ          20CD
+PRNT_NOP            20B4
+PRNT_NOT            20E7
+PRNT_OR             20EB
+PRNT_Q              2130
+PRNT_ROL            2118
+PRNT_ROR            211C
+PRNT_RTS            20B8
+PRNT_SUB            2104
+PRNT_W              20AC
+PROMPT_END          1EE7
 PROMPT_FOR_END      101C
 PROMPT_FOR_START    1000
-PROMPT_START        1E86
+PROMPT_START        1EB8
 PROMPT_USER_FOR_ENTER  1198
 REACHED_END         11BA
 REG                 1978
 REGSHIFTFORMAT_EA   1BD4
 REG_EA              1B7A
-REG_P               1D72
-RET_PBUFF           1E84
+REG_P               1DA4
+RET_PBUFF           1EB6
 RGHT_LFT            1AFE
 RTS                 1234
 R_MEM               1AB2
 R_REG               1A8A
 R_SIZE              1AAE
 SHIFT_EA_DONE       1B96
-SPACE               1FF6
+SPACE               2028
 START               1000
-START_ADDR          2036
+START_ADDR          2068
 START_OP            121C
 SUB_B               1760
 SUB_B_D             1736
@@ -1991,5 +2019,5 @@ SUB_W               176E
 SUB_W_D             1744
 S_EIGHT             1C18
 S_IMM               1BFA
-UNSUPP_MODE         1E22
-WORD                1E0A
+UNSUPP_MODE         1E54
+WORD                1E3C

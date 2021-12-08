@@ -398,9 +398,9 @@ OP_0111 *MOVEQ
     LSR.W   #8,D4
     *Print data
     
-    ** Print # in front
+    ** NOW PRINTS #$ in front
     
-    LEA     PRNT_Q,A1
+    LEA     PRNT_DT,A1
     JSR PRINT_BUFF
     
     MOVE.L  D4,D1
@@ -959,7 +959,7 @@ OP_1101 *ADD,ADDA
     BEQ     ADD_L
     
     
-    *ADDA Opmodes
+    *ADDA Opmodes (ALWAYS has An as the destination, so print <ea> first, then the register)
     CMP.B   #%011,D4
     BEQ     ADDA_W
     CMP.B   #%111,D4
@@ -1025,19 +1025,19 @@ ADD_L
     RTS * Return to IO 
 
 
-* Destination must be An, so do data reg first, then EA (POTENTIAL BUG, CHECK ********************)
+* Destination must be An, so do EA first, then reg (POTENTIAL BUG, CHECK ********************)
 ADDA_W
     JSR     IS_ADDA
     JSR     PRINT_W
     *Proceed to EA Subroutine
-    JSR     ADDFORMAT_EA_DEST_EA
+    JSR     ADDAFORMAT_EA
     RTS * Return to IO 
     
 ADDA_L  
     JSR     IS_ADDA  
     JSR     PRINT_L
     *Proceed to EA Subroutine
-    JSR     ADDFORMAT_EA_DEST_EA
+    JSR     ADDAFORMAT_EA
     RTS * Return to IO 
 
     
@@ -1372,6 +1372,33 @@ S_EIGHT
 
     RTS
     
+*------------------------------------------------------------
+*-----------HANDLE ADDA FORMAT EA ---------------------------
+ADDAFORMAT_EA
+    
+    JSR     EA_SRC * Handle source EA
+    
+    LEA     COMMA,A1
+    JSR     PRINT_BUFF
+    
+    MOVE.W  D3,D4
+    AND.W   #%0000111000000000,D4 * Isolate Register #
+    LSR.W   #3,D4
+    LSR.W   #6,D4
+    OR.B    #%00001000,D4 * set as address reg
+    MOVE.B  D4,D6   * Prime D6 register
+    
+    * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L D0-D7,-(SP) * Move register contents to stack
+    
+    JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
+    
+    * MOVEM RETURN
+    MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    
+
+
+    RTS
 *------------------------------------------------------------
 *-----------HANDLE ADD FORMAT DATA DESTINATION EA -----------
 ADDFORMAT_DATA_DEST_EA
@@ -1767,6 +1794,7 @@ DONE
 
 
 *~Font name~Courier New~
+
 
 
 
