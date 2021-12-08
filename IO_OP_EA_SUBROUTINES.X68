@@ -421,23 +421,32 @@ OP_0111 *MOVEQ
    
     RTS
     
+* HAD TO REORDER INSTRUCTIONS HERE;
+    * Before, MOVEM or JSR check was first, which needed 5 bits.
+    * The ones with fewer bits need to be done first, as this was causing the following:
+        * LEA would have first 4 bits as 0100, and the following 3 bits were address register specifier bits
+        * If that register happened to be anything that toggled the first bit to 1, LEA first five bits matches that of MOVEM and JSR!
+        * Would cause LEA to not be read correctly with certain register values. 
    
 OP_0100 *MOVEM, LEA, NOT, JSR
+    *Check if LEA (Now before MOVEM/JSR Check)
+    MOVE.L  D3,D4
+    LSL.W   #7,D4
+    MOVE.B  #13,D6
+    LSR.W   D6,D4
+    CMP.B   #%111,D4    *Check bits 8,7,6
+    BEQ     IS_LEA
+
     MOVE.L  D3,D4
     MOVE.B  #11,D6
     LSR.W   D6,D4
     CMP.B   #%01001,D4  *MOVEM or JSR
     BEQ     OP_01001
     
-    *Check if LEA
-    MOVE.L  D3,D4
-    LSL.W   #7,D4
-    MOVE.B  #13,D6
-    LSR.W   D6,D4
-    CMP.B   #%111,D4    *Check bits 8,7,6
-    BNE     IS_NOT
+    BRA     IS_NOT *** CHECK THIS, THINK THIS WORKS, BUT HAVEN'T TESTED ****************
     
-    * Is LEA
+    
+IS_LEA
     LEA     PRNT_LEA,A1
     JSR		PRINT_BUFF
     * HANDLE OPERANDS
@@ -1758,6 +1767,7 @@ DONE
 
 
 *~Font name~Courier New~
+
 
 
 
