@@ -205,7 +205,7 @@ DISPLAY_INVALID_INSTRUCTION
 *--Check if output reaches the end of screen 
 NEEDS_NEW_SCREEN
     ADD      #1,D4					 
-    CMP      #26,D4 check if output reaches 25 lines																								
+    CMP      #25,D4 check if output reaches 25 lines																								
     BEQ      PROMPT_USER_FOR_ENTER
     LEA      SPACE,A1			
     MOVE     #14,D0					
@@ -223,9 +223,14 @@ PROMPT_USER_FOR_ENTER
     TRAP #15
     
     CLR      D4	
-    MOVE.B   #5,D0			
-    TRAP     #15			
+    MOVE.B   #5,D0 read enter from keyboard			
+    TRAP     #15		
+
+    LEA SPACE, A1 fixed alignment issues
+    MOVE.B #14,D0 
+    TRAP #15	
     RTS	
+
 
 *--Ask if user wants to disassemble more memory--*
 REACHED_END
@@ -1791,15 +1796,3 @@ DONE
     LEA DONE_MESSAGE, A1
     JSR		PRINT_BUFF
     END    START        ; last line of source
-
-
-*~Font name~Courier New~
-
-
-
-
-
-*~Font name~Courier New~
-*~Font size~10~
-*~Tab type~1~
-*~Tab size~4~
