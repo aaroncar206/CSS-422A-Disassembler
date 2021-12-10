@@ -1746,7 +1746,7 @@ PRINT_HEXBUFF_NOZERO
 
 RET_PBUFF   RTS
 * Put variables and constants here
-PROMPT_START DC.B 'Please enter starting address in hexadecimal: ' ,0
+PROMPT_START DC.B 'Please enter starting address in hexadecimal (must be even): ' ,0
 PROMPT_END DC.B 'Please enter ending address in hexadecimal (must be after starting): ' ,0
 INVALID_HEX DC.W 'Error: Address must be in valid hexadecimal' ,CR,LF,0
 DONE_MESSAGE DC.B 'Done reading instructions' ,CR,LF,0
