@@ -168,7 +168,6 @@ PRINT_INSTRUCTIONS
     MOVE.B #14, D0
     TRAP #15            * Print print buffer
     
-    * Need space after print buffer? **********************************************
     LEA SPACE, A1
     MOVE.B #14,D0 
     TRAP #15 
@@ -189,7 +188,7 @@ DISPLAY_INVALID_INSTRUCTION
     MOVE.B #16, D2
     
     SUBA.W  #$0002,A3 * Offset to go back to bad data opcode word
-    MOVE.W (A3),D1 * FIX: Needs to print CURRENT opcode word, not next.
+    MOVE.W (A3),D1 
     ADDA.W  #$0002,A3 * Go back to correct current position
     
     
@@ -418,20 +417,14 @@ OP_0111 *MOVEQ
     LSR.W   #6,D4
     MOVE.B  D4,D6
     
-    MOVEM.L D0-D7,-(SP)
+    MOVEM.L D0-D6,-(SP) * D0-D6
     
     JSR     EA_SUB
     
-    MOVEM.L (SP)+,D0-D7
+    MOVEM.L (SP)+,D0-D6 * D0-D6
    
     RTS
-    
-* HAD TO REORDER INSTRUCTIONS HERE;
-    * Before, MOVEM or JSR check was first, which needed 5 bits.
-    * The ones with fewer bits need to be done first, as this was causing the following:
-        * LEA would have first 4 bits as 0100, and the following 3 bits were address register specifier bits
-        * If that register happened to be anything that toggled the first bit to 1, LEA first five bits matches that of MOVEM and JSR!
-        * Would cause LEA to not be read correctly with certain register values. 
+     
    
 OP_0100 *MOVEM, LEA, NOT, JSR
     *Check if LEA (Now before MOVEM/JSR Check)
@@ -448,7 +441,7 @@ OP_0100 *MOVEM, LEA, NOT, JSR
     CMP.B   #%01001,D4  *MOVEM or JSR
     BEQ     OP_01001
     
-    BRA     IS_NOT *** CHECK THIS, THINK THIS WORKS, BUT HAVEN'T TESTED ****************
+    BRA     IS_NOT
     
     
 IS_LEA
@@ -459,22 +452,21 @@ IS_LEA
     
     JSR EA_SRC * Handle the source EA
     
-    MOVE.L  D3,D4 **** CHANGED TO LONGWORD TO POTENTIALLY DEAL WITH BAD DATA AT FRONT WORD. *******************
+    MOVE.L  D3,D4 
     AND.W   #%0000111000000000,D4 * Isolate Register #
     LSR.W   #3,D4
     LSR.W   #6,D4
     MOVE.B  D4,D6   * Prime D6 register
     OR.B    #%00001000,D6 * Add the An mode to D6
     
-    MOVEM.L D0-D7,-(SP) * Move register contents to stack (NOT SAVING D7 ANYMORE*******************)
+    MOVEM.L D0-D6,-(SP) * D0-D6
     
     LEA COMMA,A1
     JSR PRINT_BUFF
 
     JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
     
-    * MOVEM RETURN (NOT SAVING D7 ANYMORE*******************)
-    MOVEM.L (SP)+,D0-D7
+    MOVEM.L (SP)+,D0-D6 * D0-D6
         
     RTS * Return to IO
 
@@ -513,7 +505,7 @@ NOT_L
     JSR PRINT_L 
     *Proceed to EA Subroutine
     
-NOT_EA * DEALING W/ NOT EA HERE (May need to save registers...) *************
+NOT_EA
     
     JSR EA_SRC
     RTS *** Return to IO ***
@@ -659,7 +651,8 @@ IS_BEQ
     JSR		PRINT_BUFF
     JSR DISP
     RTS  
-*------------SIZE AFFECT DISP VALUE?---------------
+
+
 DISP *8 bit displacement field
     MOVE.L  D3,D4
     LSL.W   #8,D4
@@ -1034,7 +1027,7 @@ ADD_L
     RTS * Return to IO 
 
 
-* Destination must be An, so do EA first, then reg (POTENTIAL BUG, CHECK ********************)
+* Destination must be An, so do EA first, then reg
 ADDA_W
     JSR     IS_ADDA
     JSR     PRINT_W
@@ -1051,7 +1044,7 @@ ADDA_L
 
     
     
-OP_1110 *LSL/LSR,ASL/ASR,ROL/ROR (ADDED: Using D2 to track Mem/Reg state (0 = Reg, 1 = Mem) (D2 only used in hex input tester, so good to use))
+OP_1110 *LSL/LSR,ASL/ASR,ROL/ROR (Using D2 to track Mem/Reg state (0 = Reg, 1 = Mem))
 
     *Memory Shift Check bits 6,7
     MOVE.L  D3,D4
@@ -1329,9 +1322,9 @@ REG_EA
     AND.W   #%0000000000000111,D4
     MOVE.B  D4,D6
     
-    MOVEM.L D0-D7,-(SP) * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L D0-D6,-(SP) * D0-D6
     JSR     EA_SUB
-    MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L (SP)+,D0-D6 * D0-D6
 
 SHIFT_EA_DONE
     RTS * GO TO IO; SHIFT INSTR DONE.    
@@ -1372,11 +1365,11 @@ REGSHIFTFORMAT_EA
     BEQ     S_IMM   * Bit was 0, need to do immediate value process.
     * If here, do data register contains count process (D6 already prepared)
     
-    MOVEM.L D0-D7,-(SP) * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L D0-D6,-(SP) * D0-D6
     
     JSR     EA_SUB * Print the source operand
     
-    MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L (SP)+,D0-D6 * D0-D6
 
     LEA     COMMA,A1
     JSR     PRINT_BUFF
@@ -1426,13 +1419,13 @@ ADDAFORMAT_EA
     OR.B    #%00001000,D4 * set as address reg
     MOVE.B  D4,D6   * Prime D6 register
     
-    * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-    MOVEM.L D0-D7,-(SP) * Move register contents to stack
+    * D0-D6
+    MOVEM.L D0-D6,-(SP) * Move register contents to stack
     
     JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
     
     * MOVEM RETURN
-    MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L (SP)+,D0-D6 * D0-D6
     
 
 
@@ -1450,8 +1443,8 @@ ADDFORMAT_DATA_DEST_EA
     LSR.W   #6,D4
     MOVE.B  D4,D6   * Prime D6 register
     
-    * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-    MOVEM.L D0-D7,-(SP) * Move register contents to stack
+    * D0-D6
+    MOVEM.L D0-D6,-(SP) * Move register contents to stack
 
     LEA     COMMA,A1
     JSR     PRINT_BUFF
@@ -1459,7 +1452,7 @@ ADDFORMAT_DATA_DEST_EA
     JSR     EA_SUB * Handle the destination EA (last 6 bits of D6)
     
     * MOVEM RETURN
-    MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L (SP)+,D0-D6 * D0-D6
 
     
     RTS
@@ -1473,14 +1466,14 @@ ADDFORMAT_EA_DEST_EA
     LSR.W   #6,D4
     MOVE.B  D4,D6   * Prime D6 register
     
-    * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    * D0-D6
 
-    MOVEM.L D0-D7,-(SP) * Move register contents to stack
+    MOVEM.L D0-D6,-(SP) * Move register contents to stack
     
     JSR     EA_SUB * Handle the source EA
     
     * MOVEM RETURN
-    MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L (SP)+,D0-D6 * D0-D6
 
     
     MOVE.W  D3,D4  * Refresh opcode
@@ -1495,8 +1488,8 @@ ADDFORMAT_EA_DEST_EA
 *------------------------------------------------------------
 *-------------------HANDLE SOURCE EA (last 6 bits)-----------
 EA_SRC
-    * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-    MOVEM.L D0-D7,-(SP) * Move register contents to stack
+    
+    MOVEM.L D0-D6,-(SP) * D0-D6
 
     MOVE.W  D3,D4
     AND.W   #%0000000000111111,D4
@@ -1505,13 +1498,13 @@ EA_SRC
     JSR EA_SUB ** Print source EA bits from bits in D6
     
     * MOVEM RETURN
-    MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    MOVEM.L (SP)+,D0-D6 * D0-D6
     RTS
 *------------------------------------------------------------
 *------HANDLE DESTINATION EA(6 bits before last 6 bits)------
 EA_DEST
-    * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
-    MOVEM.L D0-D7,-(SP) * Move register contents to stack
+    * D0-D6
+    MOVEM.L D0-D6,-(SP) * Move register contents to stack
 
     MOVE.W  D3,D4
     AND.W #%0000111111000000,D4
@@ -1530,8 +1523,8 @@ EA_DEST
     
     JSR     EA_SUB
     
-    * MOVEM RETURN
-    MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
+    * D0-D6
+    MOVEM.L (SP)+,D0-D6
     
     RTS
 *------------------------------------------------------------ 
@@ -1831,3 +1824,8 @@ DONE
     JSR		PRINT_BUFF
     END    START        ; last line of source
 
+
+*~Font name~Courier New~
+*~Font size~10~
+*~Tab type~1~
+*~Tab size~4~
