@@ -17,7 +17,7 @@ PBUFF EQU $900
 
     ORG    $1000
 START:                  ; first instruction of program
-
+    LSL.B  D0,D5
 
 * --Prompt user for starting address--
 PROMPT_FOR_START
@@ -539,18 +539,19 @@ IS_MOVEM
     
     LEA     PRNT_MOVEM,A1
     JSR	PRINT_BUFF
+    RTS
     
-    MOVE.L  D3,D4
-    MOVE.B  #9,D6
-    LSL.W   D6,D4
-    MOVE.B  #15,D6
-    LSR.W   D6,D4
+*    MOVE.L  D3,D4
+*    MOVE.B  #9,D6
+*    LSL.W   D6,D4
+*    MOVE.B  #15,D6
+*    LSR.W   D6,D4
     
-    CMP.B   #0,D4
-    BEQ     MOVEM_W
-    CMP.B   #1,D4
-    BEQ     MOVEM_L    
-    BRA     INVALID_OP   
+*    CMP.B   #0,D4
+*    BEQ     MOVEM_W
+*    CMP.B   #1,D4
+*    BEQ     MOVEM_L    
+*    BRA     INVALID_OP  
 MOVEM_W
     JSR PRINT_W
     *Proceed to EA Subroutine    
@@ -608,6 +609,9 @@ ADDQ_DATA
     
     MOVE.W  D4,D1
     JSR     PRINT_HEXBUFF
+    
+    LEA     COMMA,A1
+    JSR     PRINT_BUFF
     
     * Handle EA
     JSR     EA_SRC
@@ -1124,6 +1128,9 @@ IS_ASR
     JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     A_SIZE
+    
+    LEA     SPACE,A1
+    JSR     PRINT_BUFF
 
     BRA     DO_SHIFT_EA * FOR MEM ONES WITH NO SIZE ATTRIBUTE.
 
@@ -1133,6 +1140,9 @@ IS_ASL
     JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     A_SIZE
+    
+    LEA     SPACE,A1
+    JSR     PRINT_BUFF
 
     BRA     DO_SHIFT_EA * FOR MEM ONES WITH NO SIZE ATTRIBUTE.
 
@@ -1173,6 +1183,9 @@ IS_LSR
     CMP.B   #01,D6
     BEQ     L_SIZE
     
+    LEA     SPACE,A1
+    JSR     PRINT_BUFF
+    
     BRA     DO_SHIFT_EA * FOR MEM ONES WITH NO SIZE ATTRIBUTE.
     
 
@@ -1181,6 +1194,9 @@ IS_LSL
     JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     L_SIZE 
+    
+    LEA     SPACE,A1
+    JSR     PRINT_BUFF
     
     BRA     DO_SHIFT_EA * FOR MEM ONES WITH NO SIZE ATTRIBUTE.
     
@@ -1221,7 +1237,10 @@ IS_ROR
     LEA     PRNT_ROR,A1
     JSR		PRINT_BUFF
     CMP.B   #01,D6
-    BEQ     R_SIZE  
+    BEQ     R_SIZE
+    
+    LEA     SPACE,A1
+    JSR     PRINT_BUFF
 
     BRA     DO_SHIFT_EA * FOR MEM ONES WITH NO SIZE ATTRIBUTE.
   
@@ -1231,6 +1250,9 @@ IS_ROL
     JSR		PRINT_BUFF
     CMP.B   #01,D6
     BEQ     R_SIZE 
+    
+    LEA     SPACE,A1
+    JSR     PRINT_BUFF
 
     BRA     DO_SHIFT_EA * FOR MEM ONES WITH NO SIZE ATTRIBUTE.
    
@@ -1336,12 +1358,14 @@ INVALID_OP
     RTS
 *-----------HANDLE BIT SHIFTING EA SOURCE -------------------------
 REGSHIFTFORMAT_EA
-    MOVE.W  D3,D4 * Refresh D4 with our opcode word to analyze
+    MOVE.L  D3,D4 * Refresh D4 with our opcode word to analyze
      
-    AND.W   #%0000111000000000,D4 * Isolate the register number
-    LSR.W   #3,D4   * Shift reg/count to far right
-    LSR.W   #6,D4
-    MOVE.B  D4,D6   * D6 now contains either our register number or amount to shift by
+    AND.L   #%0000111000000000,D4 * Isolate the register number
+    LSR.L   #3,D4   * Shift reg/count to far right
+    LSR.L   #6,D4
+    MOVE.L  D4,D6   * D6 now contains either our register number or amount to shift by
+    
+    MOVE.L  D6,D1
     
     MOVE.W  D3,D4
     BTST    #5,D4 * Test bit 5 to tell if specified as a register or immediate value (Doesn't modify D4)
@@ -1354,6 +1378,8 @@ REGSHIFTFORMAT_EA
     
     MOVEM.L (SP)+,D0-D7 * POTENTIAL BUG: SHOULDN'T SAVE D7 ADDRESS *****************************************
 
+    LEA     COMMA,A1
+    JSR     PRINT_BUFF
     
     RTS * Go back to process the destination
     
@@ -1364,8 +1390,12 @@ S_IMM
     CMP.B   #0,D6 * Test to see if D6 is equal to zero.
     BEQ     S_EIGHT * Convert value to 8.
     
+    
     MOVE.B  D6,D1 * Print the value.
     JSR     PRINT_HEXBUFF
+    
+    LEA     COMMA,A1
+    JSR     PRINT_BUFF
     
     RTS
 
@@ -1374,6 +1404,9 @@ S_EIGHT
     
     MOVE.B  D6,D1 * Print the value.
     JSR     PRINT_HEXBUFF
+
+    LEA     COMMA,A1
+    JSR     PRINT_BUFF
 
     RTS
     
@@ -1508,6 +1541,7 @@ EA_DEST
 EA_SUB
 
             * 1: Process the 6-bit field into D3 (Register bits) and D4 (Mode bits)
+            CLR.L   D4
             MOVE.B  D6,D4 * Prime D4 with the full 6-bit field
             AND.B   #%00000111,D4 * Clear everything but the register bits (BITS READY)
             
@@ -1752,15 +1786,15 @@ PRNT_RTS    DC.B    'RTS',0
 PRNT_MOVE   DC.B    'MOVE',0
 PRNT_MOVEA  DC.B    'MOVEA',0
 PRNT_MOVEM  DC.B    'MOVEM',0
-PRNT_MOVEQ  DC.B    'MOVEQ',0
-PRNT_JSR    DC.B    'JSR',0
-PRNT_BGT    DC.B    'BGT',0
-PRNT_BLE    DC.B    'BLE',0
-PRNT_BEQ    DC.B    'BEQ',0
-PRNT_BRA    DC.B    'BRA',0
+PRNT_MOVEQ  DC.B    'MOVEQ ',0
+PRNT_JSR    DC.B    'JSR ',0
+PRNT_BGT    DC.B    'BGT $',0
+PRNT_BLE    DC.B    'BLE $',0
+PRNT_BEQ    DC.B    'BEQ $',0
+PRNT_BRA    DC.B    'BRA $',0
 PRNT_NOT    DC.B    'NOT',0
 PRNT_OR     DC.B    'OR',0
-PRNT_LEA    DC.B    'LEA',0
+PRNT_LEA    DC.B    'LEA ',0
 PRNT_ADDQ   DC.B    'ADDQ',0
 PRNT_ADD    DC.B    'ADD',0
 PRNT_ADDA   DC.B    'ADDA',0
@@ -1796,3 +1830,4 @@ DONE
     LEA DONE_MESSAGE, A1
     JSR		PRINT_BUFF
     END    START        ; last line of source
+
